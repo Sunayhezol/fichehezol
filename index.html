@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Fiche D&D 2024 — v24 (accordéons)</title>
+<title>Fiche D&D 2024 — v25 (toggle global Caractéristiques)</title>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;600;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -31,6 +31,7 @@ h1:after{content:"";display:block;height:3px;margin:10px auto 0;width:260px;
 .btn{border:1px solid #000;border-radius:12px;padding:9px 14px;background:linear-gradient(180deg,#22192f,#120c1b);color:var(--white);font-weight:700;cursor:pointer}
 .btn.sec{background:linear-gradient(180deg,#1b1a1e,#0f0e11)}
 .btn.dan{background:linear-gradient(180deg,#3a1313,#1c0b0b)}
+.btn.sm{padding:6px 10px;font-size:14px}
 .hr{height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:10px 0;border-radius:1px}
 /* Grid */
 .board{display:grid;grid-template-columns:repeat(3,minmax(280px,1fr));gap:var(--gap);align-items:start}
@@ -63,26 +64,19 @@ label{font-size:13px;color:var(--muted)}
 .row2{grid-template-columns:1fr 1fr}
 .row3{grid-template-columns:1fr 1fr 1fr}
 /* Caractéristiques en 2 colonnes */
+.abilities-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .abilities-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 @media (max-width:720px){.abilities-grid{grid-template-columns:1fr}}
+.abilities-compact .sub{display:none} /* Vue compacte globale */
 .ability{border:2px solid #000;border-radius:16px;padding:10px;background:linear-gradient(180deg,rgba(40,26,63,.85),rgba(17,12,26,.85));box-shadow:inset 0 0 16px rgba(0,0,0,.8)}
-.ability-h{display:grid;grid-template-columns:auto 1fr 80px;gap:10px;align-items:end}
+.ability-h{display:grid;grid-template-columns:1fr 80px;gap:10px;align-items:end}
 .badge{border:1px solid #000;border-radius:12px;padding:8px;text-align:center;font-weight:700;color:var(--white);background:linear-gradient(180deg,rgba(201,168,74,.22),rgba(201,168,74,.06));box-shadow:inset 0 0 8px rgba(241,215,107,.2)}
 .sub{margin-top:8px;border-top:1px solid rgba(201,168,74,.35);padding-top:8px}
-.sub.collapsed{display:none}
 .subrow{display:grid;grid-template-columns:28px 1fr 110px;gap:8px;align-items:center;margin:3px 0}
 .dagger{text-align:center;font-size:18px;opacity:.95}
-/* bouton chevron */
-.chev{
-  border:1px solid #000;border-radius:10px;width:38px;height:38px;
-  display:flex;align-items:center;justify-content:center;cursor:pointer;
-  background:linear-gradient(180deg,#1f162b,#0f0a14);user-select:none
-}
-.chev span{transition:transform .18s ease}
-.chev[aria-expanded="false"] span{transform:rotate(-90deg)}
 /* stars */
 .stars{display:flex;gap:6px;flex-wrap:wrap;padding:4px 0 2px}
-.star{width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:20px;border:1px solid #000;border-radius:10px;background:linear-gradient(180deg,#1f162b,#0f0a14);color:var(--white);cursor:pointer;user-select:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.06);flex:0 0 auto}
+.star{width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:20px;border:1px solid #000;border-radius:10px;background:linear-gradient(180deg,#1f162b,#0f0e11);color:var(--white);cursor:pointer;user-select:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.06);flex:0 0 auto}
 .star.active.gold{background:linear-gradient(180deg,var(--gold2),var(--gold));color:#1a1406;border-color:#1a1406}
 .star.active.black{background:linear-gradient(180deg,#2a2a2a,#111);color:#fff;border-color:#000}
 /* list rows */
@@ -98,7 +92,7 @@ label{font-size:13px;color:var(--muted)}
 <div class="wrapper">
   <div class="sheet">
     <h1>Fiche de Personnage — D&D 2024</h1>
-    <div class="subtitle" id="status">v24 • Caractéristiques en 2 colonnes • Accordéons • Mods temps réel • Sous-carac manuelles</div>
+    <div class="subtitle" id="status">v25 • Toggle global Caractéristiques • 2 colonnes • Mods temps réel</div>
 
     <div class="toolbar">
       <button class="btn" id="exportBtn">📤 Exporter</button>
@@ -113,10 +107,14 @@ label{font-size:13px;color:var(--muted)}
       <div class="left-area">
         <div class="card" id="abilitiesCard">
           <div class="title"><span>Caractéristiques</span></div>
-          <div id="abilities" class="abilities-grid"></div>
-          <div style="color:var(--muted);font-size:13px;margin-top:6px">
-            Saisis à la main les bonus de sauvegarde et compétences. Les modificateurs sont calculés automatiquement.
+
+          <div class="abilities-header">
+            <div style="color:var(--muted);font-size:13px">Les modificateurs se calculent automatiquement.</div>
+            <button class="btn sm sec" id="toggleCompactBtn">Vue compacte</button>
           </div>
+
+          <div id="abilities" class="abilities-grid"></div>
+
         </div>
       </div>
 
@@ -127,7 +125,7 @@ label{font-size:13px;color:var(--muted)}
 
 <script>
 /* ====== Constantes & utilitaires ====== */
-const K='sheet2024_v24', ORDER='sheet2024_v24_right_order';
+const K='sheet2024_v25', ORDER='sheet2024_v25_right_order';
 const ABILITIES=[{key:'FOR',name:'Force'},{key:'DEX',name:'Dextérité'},{key:'CON',name:'Constitution'},{key:'INT',name:'Intelligence'},{key:'SAG',name:'Sagesse'},{key:'CHA',name:'Charisme'}];
 const SKILLS={FOR:['Athlétisme'],DEX:['Acrobaties','Discrétion','Escamotage'],CON:[],INT:['Arcanes','Histoire','Investigation','Nature','Religion'],SAG:['Dressage','Médecine','Perception','Intuition','Survie'],CHA:['Intimidation','Persuasion','Représentation','Tromperie']};
 const qs=(s,p=document)=>p.querySelector(s); const qsa=(s,p=document)=>[...p.querySelectorAll(s)];
@@ -144,7 +142,7 @@ function defaults(){
     abilities:{FOR:10,DEX:10,CON:10,INT:10,SAG:10,CHA:10},
     saveManual:{FOR:'',DEX:'',CON:'',INT:'',SAG:'',CHA:''},
     skillManual:{},
-    abilitiesCollapsed:{FOR:false,DEX:false,CON:false,INT:false,SAG:false,CHA:false},
+    abilitiesCompact:false, /* << état global compact/étendu */
     ac:12,init:2,speed:9,hp:10,hp_max:10,hit_dice:'1d8',temp_notes:'',
     attacks:[{name:'Dague',bonus:'+5',dmg:'1d4+3',desc:''}],
     inventory:['Rations (1 jour)','Corde (15 m)'],
@@ -155,13 +153,12 @@ function defaults(){
 }
 
 /* ====== Persistance ====== */
+function isCompact(){ return qs('#abilities').classList.contains('abilities-compact'); }
 function collect(){
   const d=defaults();
   ABILITIES.forEach(a=>{
     d.abilities[a.key]=i(v('abl_'+a.key),10);
     d.saveManual[a.key]=v('sav_'+a.key);
-    const sub=qs('#sub_'+a.key);
-    d.abilitiesCollapsed[a.key]=sub?.classList.contains('collapsed')||false;
   });
   Object.values(SKILLS).flat().forEach(n=>d.skillManual[n]=v('sk_'+n));
   d.char_name=v('char_name'); d.class_only=v('class_only'); d.level=i(v('level'),1);
@@ -173,12 +170,13 @@ function collect(){
   d.attacks=qsa('[data-attack]').map(r=>({name:qs('.atk-name',r).value,bonus:qs('.atk-bonus',r).value,dmg:qs('.atk-dmg',r).value,desc:qs('.atk-desc',r).value}));
   d.inventory=qsa('[data-item]').map(x=>x.value);
   d.features=qsa('[data-feature]').map(x=>x.value);
+  d.abilitiesCompact=isCompact();
   return d;
 }
 function save(){
   if(!canStore()) { setStatus('⚠️ Sauvegarde inactive'); return; }
   localStorage.setItem(K,JSON.stringify(collect()));
-  setStatus('Sauvegardé ✅'); clearTimeout(window._st); window._st=setTimeout(()=>setStatus('v24 prête ✅'),1000);
+  setStatus('Sauvegardé ✅'); clearTimeout(window._st); window._st=setTimeout(()=>setStatus('v25 prête ✅'),1000);
 }
 function setStatus(s){ setT('status',s); }
 function load(){
@@ -189,17 +187,25 @@ function load(){
   syncStars(['star1','star2','star3'], d.inspirationStars,'gold');
   syncStars(['ds_s1','ds_s2','ds_s3'], d.ds_success,'gold');
   syncStars(['ds_f1','ds_f2','ds_f3'], d.ds_failure,'black');
+
+  // appliquer l’état compact global
+  const wrap=qs('#abilities');
+  wrap.classList.toggle('abilities-compact', !!d.abilitiesCompact);
+  setToggleLabel();
+
   localStorage.setItem(K,JSON.stringify(d));
 }
 
-/* ====== Accordéons Caractéristiques ====== */
-function toggleAbility(key){
-  const btn=qs('#chev_'+key);
-  const sub=qs('#sub_'+key);
-  if(!btn||!sub) return;
-  const exp = btn.getAttribute('aria-expanded')==='true';
-  btn.setAttribute('aria-expanded', String(!exp));
-  sub.classList.toggle('collapsed', exp);
+/* ====== Toggle global compact ====== */
+function setToggleLabel(){
+  const btn=qs('#toggleCompactBtn');
+  const compact=isCompact();
+  btn.textContent = compact ? 'Vue détaillée' : 'Vue compacte';
+}
+function toggleCompact(){
+  const wrap=qs('#abilities');
+  wrap.classList.toggle('abilities-compact');
+  setToggleLabel();
   save(); // mémorise l’état
 }
 
@@ -213,20 +219,16 @@ function renderAbilities(d){
       <div class="subrow">${dagger()}<div>${s}</div>
         <input class="inp" type="number" id="sk_${s}" placeholder="bonus" value="${d.skillManual[s]??''}" oninput="save()">
       </div>`).join('');
-    const collapsed = d.abilitiesCollapsed?.[a.key]===true;
     const html=`
       <div class="ability" data-key="${a.key}">
         <div class="ability-h">
-          <div class="chev" id="chev_${a.key}" aria-expanded="${collapsed? 'false':'true'}" onclick="toggleAbility('${a.key}')" title="${collapsed?'Développer':'Replier'}">
-            <span>▾</span>
-          </div>
           <div>
             <label>${a.name}</label>
             <input class="inp" id="abl_${a.key}" type="number" value="${d.abilities[a.key]??10}" oninput="recalcMods();save()">
           </div>
           <div class="badge" id="mod_${a.key}">${fmt(mod(d.abilities[a.key]))}</div>
         </div>
-        <div class="sub ${collapsed?'collapsed':''}" id="sub_${a.key}">
+        <div class="sub">
           <div class="subrow">${dagger()}<div>Sauvegarde</div>
             <input class="inp" type="number" id="sav_${a.key}" placeholder="bonus" value="${d.saveManual[a.key]??''}" oninput="save()">
           </div>
@@ -386,11 +388,11 @@ window.addEventListener('load',()=>{
   qs('#importBtn').addEventListener('click',()=>qs('#importInput').click());
   qs('#importInput').addEventListener('change',e=>{const f=e.target.files[0]; if(f) importJSON(f);});
   qs('#resetBtn').addEventListener('click',resetAll);
+  qs('#toggleCompactBtn').addEventListener('click',toggleCompact);
 });
-/* exposer quelques fonctions globales */
-window.recalcMods=recalcMods;
-window.addAttack=addAttack; window.addItem=addItem; window.addFeature=addFeature;
-window.toggleStars=toggleStars; window.save=save; window.toggleAbility=toggleAbility;
+/* expose global */
+window.recalcMods=recalcMods; window.addAttack=addAttack; window.addItem=addItem; window.addFeature=addFeature;
+window.toggleStars=toggleStars; window.save=save; window.toggleCompact=toggleCompact;
 </script>
 </body>
 </html>
