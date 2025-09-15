@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fiche D&D 2024</title>
+  <style>
+    body { font-family: sans-serif; background: #f5f5f5; margin: 0; padding: 1rem; }
+    .container { max-width: 800px; margin: auto; }
+    .card { background: white; border-radius: 12px; padding: 1rem; margin-bottom: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    h1, h2 { text-align: center; }
+    input { width: 100%; padding: 0.5rem; margin: 0.2rem 0; border: 1px solid #ccc; border-radius: 6px; }
+    button { margin-top: 0.5rem; padding: 0.5rem 1rem; border: none; border-radius: 6px; background: #1976d2; color: white; font-weight: bold; cursor: pointer; }
+    button:hover { background: #0d47a1; }
+    .grid { display: grid; gap: 1rem; }
+    .grid-2 { grid-template-columns: 1fr 1fr; }
+    .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📜 Fiche de Personnage D&D 2024</h1>
+
+    <!-- Bloc infos rapides -->
+    <div class="card grid grid-2">
+      <div>
+        <label>Points de Vie</label>
+        <input id="pv" type="number" value="10">
+      </div>
+      <div>
+        <label>Classe d'Armure</label>
+        <input id="ca" type="number" value="12">
+      </div>
+      <div>
+        <label>Initiative</label>
+        <input id="initiative" type="number" value="2">
+      </div>
+      <div>
+        <label>Vitesse (m)</label>
+        <input id="vitesse" type="number" value="9">
+      </div>
+    </div>
+
+    <!-- Caractéristiques -->
+    <div class="card">
+      <h2>Caractéristiques</h2>
+      <div class="grid grid-3" id="stats"></div>
+    </div>
+
+    <!-- Attaques -->
+    <div class="card">
+      <h2>Attaques</h2>
+      <div id="attaques"></div>
+      <button onclick="ajouterAttaque()">+ Ajouter Attaque</button>
+    </div>
+
+    <!-- Capacités -->
+    <div class="card">
+      <h2>Capacités</h2>
+      <div id="capacites"></div>
+      <button onclick="ajouterCapacite()">+ Ajouter Capacité</button>
+    </div>
+  </div>
+
+  <script>
+    // Sauvegarde auto avec localStorage
+    function saveData() {
+      const data = {
+        pv: document.getElementById('pv').value,
+        ca: document.getElementById('ca').value,
+        initiative: document.getElementById('initiative').value,
+        vitesse: document.getElementById('vitesse').value,
+        stats: Array.from(document.querySelectorAll('#stats input')).map(i => i.value),
+        attaques: Array.from(document.querySelectorAll('#attaques .atk')).map(div => ({
+          nom: div.querySelector('.nom').value,
+          bonus: div.querySelector('.bonus').value,
+          degats: div.querySelector('.degats').value
+        })),
+        capacites: Array.from(document.querySelectorAll('#capacites input')).map(i => i.value)
+      };
+      localStorage.setItem('ficheDnD', JSON.stringify(data));
+    }
+
+    function loadData() {
+      const saved = localStorage.getItem('ficheDnD');
+      if (!saved) return;
+      const data = JSON.parse(saved);
+
+      document.getElementById('pv').value = data.pv || 10;
+      document.getElementById('ca').value = data.ca || 12;
+      document.getElementById('initiative').value = data.initiative || 2;
+      document.getElementById('vitesse').value = data.vitesse || 9;
+
+      const statsNames = ["FOR","DEX","CON","INT","SAG","CHA"];
+      const statsDiv = document.getElementById('stats');
+      statsDiv.innerHTML = '';
+      statsNames.forEach((s, i) => {
+        const input = document.createElement('input');
+        input.value = data.stats[i] || 10;
+        input.oninput = saveData;
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = `<label>${s}</label>`;
+        wrapper.appendChild(input);
+        statsDiv.appendChild(wrapper);
+      });
+
+      document.getElementById('attaques').innerHTML = '';
+      data.attaques.forEach(a => ajouterAttaque(a.nom, a.bonus, a.degats));
+
+      document.getElementById('capacites').innerHTML = '';
+      data.capacites.forEach(c => ajouterCapacite(c));
+    }
+
+    function ajouterAttaque(nom='', bonus='', degats='') {
+      const container = document.createElement('div');
+      container.className = 'atk grid grid-3';
+      container.innerHTML = `
+        <input class="nom" placeholder="Nom" value="${nom}" oninput="saveData()">
+        <input class="bonus" placeholder="Bonus" value="${bonus}" oninput="saveData()">
+        <input class="degats" placeholder="Dégâts" value="${degats}" oninput="saveData()">
+      `;
+      document.getElementById('attaques').appendChild(container);
+      saveData();
+    }
+
+    function ajouterCapacite(val='') {
+      const input = document.createElement('input');
+      input.value = val;
+      input.placeholder = "Nouvelle capacité";
+      input.oninput = saveData;
+      document.getElementById('capacites').appendChild(input);
+      saveData();
+    }
+
+    // Initialisation
+    window.onload = () => {
+      if (!localStorage.getItem('ficheDnD')) {
+        const statsNames = ["FOR","DEX","CON","INT","SAG","CHA"];
+        const statsDiv = document.getElementById('stats');
+        statsNames.forEach(s => {
+          const input = document.createElement('input');
+          input.value = 10;
+          input.oninput = saveData;
+          const wrapper = document.createElement('div');
+          wrapper.innerHTML = `<label>${s}</label>`;
+          wrapper.appendChild(input);
+          statsDiv.appendChild(wrapper);
+        });
+        ajouterAttaque("Dague", "+5", "1d4+3");
+        ajouterCapacite("Attaque sournoise");
+        ajouterCapacite("Assassinat");
+        saveData();
+      } else {
+        loadData();
+      }
+    }
+  </script>
+</body>
+</html>
