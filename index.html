@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Fiche D&D 2024 — v22 compact</title>
+<title>Fiche D&D 2024 — v24 (accordéons)</title>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;600;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -42,7 +42,7 @@ h1:after{content:"";display:block;height:3px;margin:10px auto 0;width:260px;
 .card{position:relative;background:
   radial-gradient(120% 120% at 50% -20%, rgba(241,215,107,.07), transparent 60%),
   linear-gradient(180deg,rgba(40,26,63,.88),rgba(17,12,26,.88));
-  border:3px solid #000;border-radius:22px;padding:14px;box-shadow:inset 0 0 22px rgba(0,0,0,.8),0 10px 26px rgba(0,0,0,.75)}
+  border:3px solid #000;border-radius:22px;padding:14px;box-shadow:inset 0 0 22px rgba(0,0,0,.8),0 10px 26px rgba(0,0,0,.75);overflow:hidden}
 .card:before{content:"";position:absolute;inset:8px;border-radius:16px;border:2px solid rgba(201,168,74,.65);box-shadow:inset 0 0 10px rgba(241,215,107,.15);pointer-events:none}
 .card:after{content:"";position:absolute;inset:0;border-radius:22px;background:
   radial-gradient(30px 30px at 0 0, rgba(201,168,74,.5), transparent 60%),
@@ -62,13 +62,25 @@ label{font-size:13px;color:var(--muted)}
 .row{display:grid;gap:12px}
 .row2{grid-template-columns:1fr 1fr}
 .row3{grid-template-columns:1fr 1fr 1fr}
-/* Abilities */
-.ability{border:2px solid #000;border-radius:16px;padding:10px;background:linear-gradient(180deg,rgba(40,26,63,.85),rgba(17,12,26,.85));box-shadow:inset 0 0 16px rgba(0,0,0,.8);margin-bottom:8px}
-.ability-h{display:grid;grid-template-columns:1fr 80px;gap:10px;align-items:end}
+/* Caractéristiques en 2 colonnes */
+.abilities-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:720px){.abilities-grid{grid-template-columns:1fr}}
+.ability{border:2px solid #000;border-radius:16px;padding:10px;background:linear-gradient(180deg,rgba(40,26,63,.85),rgba(17,12,26,.85));box-shadow:inset 0 0 16px rgba(0,0,0,.8)}
+.ability-h{display:grid;grid-template-columns:auto 1fr 80px;gap:10px;align-items:end}
 .badge{border:1px solid #000;border-radius:12px;padding:8px;text-align:center;font-weight:700;color:var(--white);background:linear-gradient(180deg,rgba(201,168,74,.22),rgba(201,168,74,.06));box-shadow:inset 0 0 8px rgba(241,215,107,.2)}
 .sub{margin-top:8px;border-top:1px solid rgba(201,168,74,.35);padding-top:8px}
+.sub.collapsed{display:none}
 .subrow{display:grid;grid-template-columns:28px 1fr 110px;gap:8px;align-items:center;margin:3px 0}
 .dagger{text-align:center;font-size:18px;opacity:.95}
+/* bouton chevron */
+.chev{
+  border:1px solid #000;border-radius:10px;width:38px;height:38px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  background:linear-gradient(180deg,#1f162b,#0f0a14);user-select:none
+}
+.chev span{transition:transform .18s ease}
+.chev[aria-expanded="false"] span{transform:rotate(-90deg)}
+/* stars */
 .stars{display:flex;gap:6px;flex-wrap:wrap;padding:4px 0 2px}
 .star{width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:20px;border:1px solid #000;border-radius:10px;background:linear-gradient(180deg,#1f162b,#0f0a14);color:var(--white);cursor:pointer;user-select:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.06);flex:0 0 auto}
 .star.active.gold{background:linear-gradient(180deg,var(--gold2),var(--gold));color:#1a1406;border-color:#1a1406}
@@ -86,7 +98,7 @@ label{font-size:13px;color:var(--muted)}
 <div class="wrapper">
   <div class="sheet">
     <h1>Fiche de Personnage — D&D 2024</h1>
-    <div class="subtitle" id="status">Compacte ✅ • Détails dorés ✅ • Mods temps réel ✅ • Sous-carac manuelles ✅</div>
+    <div class="subtitle" id="status">v24 • Caractéristiques en 2 colonnes • Accordéons • Mods temps réel • Sous-carac manuelles</div>
 
     <div class="toolbar">
       <button class="btn" id="exportBtn">📤 Exporter</button>
@@ -101,7 +113,7 @@ label{font-size:13px;color:var(--muted)}
       <div class="left-area">
         <div class="card" id="abilitiesCard">
           <div class="title"><span>Caractéristiques</span></div>
-          <div id="abilities"></div>
+          <div id="abilities" class="abilities-grid"></div>
           <div style="color:var(--muted);font-size:13px;margin-top:6px">
             Saisis à la main les bonus de sauvegarde et compétences. Les modificateurs sont calculés automatiquement.
           </div>
@@ -115,7 +127,7 @@ label{font-size:13px;color:var(--muted)}
 
 <script>
 /* ====== Constantes & utilitaires ====== */
-const K='sheet2024_v22_compact', ORDER='sheet2024_v22_right_order';
+const K='sheet2024_v24', ORDER='sheet2024_v24_right_order';
 const ABILITIES=[{key:'FOR',name:'Force'},{key:'DEX',name:'Dextérité'},{key:'CON',name:'Constitution'},{key:'INT',name:'Intelligence'},{key:'SAG',name:'Sagesse'},{key:'CHA',name:'Charisme'}];
 const SKILLS={FOR:['Athlétisme'],DEX:['Acrobaties','Discrétion','Escamotage'],CON:[],INT:['Arcanes','Histoire','Investigation','Nature','Religion'],SAG:['Dressage','Médecine','Perception','Intuition','Survie'],CHA:['Intimidation','Persuasion','Représentation','Tromperie']};
 const qs=(s,p=document)=>p.querySelector(s); const qsa=(s,p=document)=>[...p.querySelectorAll(s)];
@@ -131,7 +143,9 @@ function defaults(){
     inspirationStars:0,ds_success:0,ds_failure:0,
     abilities:{FOR:10,DEX:10,CON:10,INT:10,SAG:10,CHA:10},
     saveManual:{FOR:'',DEX:'',CON:'',INT:'',SAG:'',CHA:''},
-    skillManual:{}, ac:12,init:2,speed:9,hp:10,hp_max:10,hit_dice:'1d8',temp_notes:'',
+    skillManual:{},
+    abilitiesCollapsed:{FOR:false,DEX:false,CON:false,INT:false,SAG:false,CHA:false},
+    ac:12,init:2,speed:9,hp:10,hp_max:10,hit_dice:'1d8',temp_notes:'',
     attacks:[{name:'Dague',bonus:'+5',dmg:'1d4+3',desc:''}],
     inventory:['Rations (1 jour)','Corde (15 m)'],
     features:['Attaque sournoise','Assassinat']
@@ -143,13 +157,13 @@ function defaults(){
 /* ====== Persistance ====== */
 function collect(){
   const d=defaults();
-  // abilities
   ABILITIES.forEach(a=>{
     d.abilities[a.key]=i(v('abl_'+a.key),10);
     d.saveManual[a.key]=v('sav_'+a.key);
+    const sub=qs('#sub_'+a.key);
+    d.abilitiesCollapsed[a.key]=sub?.classList.contains('collapsed')||false;
   });
   Object.values(SKILLS).flat().forEach(n=>d.skillManual[n]=v('sk_'+n));
-  // identity/combat/lists
   d.char_name=v('char_name'); d.class_only=v('class_only'); d.level=i(v('level'),1);
   d.background=v('background'); d.race=v('race'); d.subclass=v('subclass'); d.prof_bonus=i(v('prof_bonus'),2);
   d.ac=i(v('ac'),12); d.init=i(v('init'),2); d.speed=i(v('speed'),9);
@@ -164,14 +178,13 @@ function collect(){
 function save(){
   if(!canStore()) { setStatus('⚠️ Sauvegarde inactive'); return; }
   localStorage.setItem(K,JSON.stringify(collect()));
-  setStatus('Sauvegardé ✅'); clearTimeout(window._st); window._st=setTimeout(()=>setStatus('Compacte + détails dorés ✅'),1000);
+  setStatus('Sauvegardé ✅'); clearTimeout(window._st); window._st=setTimeout(()=>setStatus('v24 prête ✅'),1000);
 }
 function setStatus(s){ setT('status',s); }
 function load(){
   let d=null; try{d=JSON.parse(localStorage.getItem(K))}catch(_){}
   if(!d) d=defaults();
   renderAbilities(d); renderRight(d); applyRightOrder(); initDnD();
-  // badges init
   ABILITIES.forEach(a=>setT('mod_'+a.key,fmt(mod(d.abilities[a.key]))));
   syncStars(['star1','star2','star3'], d.inspirationStars,'gold');
   syncStars(['ds_s1','ds_s2','ds_s3'], d.ds_success,'gold');
@@ -179,7 +192,18 @@ function load(){
   localStorage.setItem(K,JSON.stringify(d));
 }
 
-/* ====== Rendu Caractéristiques (gauche) ====== */
+/* ====== Accordéons Caractéristiques ====== */
+function toggleAbility(key){
+  const btn=qs('#chev_'+key);
+  const sub=qs('#sub_'+key);
+  if(!btn||!sub) return;
+  const exp = btn.getAttribute('aria-expanded')==='true';
+  btn.setAttribute('aria-expanded', String(!exp));
+  sub.classList.toggle('collapsed', exp);
+  save(); // mémorise l’état
+}
+
+/* ====== Caractéristiques (gauche) ====== */
 const dagger=()=>'<div class="dagger"><span>🗡️</span></div>';
 function renderAbilities(d){
   const host=qs('#abilities'); host.innerHTML='';
@@ -189,16 +213,20 @@ function renderAbilities(d){
       <div class="subrow">${dagger()}<div>${s}</div>
         <input class="inp" type="number" id="sk_${s}" placeholder="bonus" value="${d.skillManual[s]??''}" oninput="save()">
       </div>`).join('');
+    const collapsed = d.abilitiesCollapsed?.[a.key]===true;
     const html=`
-      <div class="ability">
+      <div class="ability" data-key="${a.key}">
         <div class="ability-h">
+          <div class="chev" id="chev_${a.key}" aria-expanded="${collapsed? 'false':'true'}" onclick="toggleAbility('${a.key}')" title="${collapsed?'Développer':'Replier'}">
+            <span>▾</span>
+          </div>
           <div>
             <label>${a.name}</label>
             <input class="inp" id="abl_${a.key}" type="number" value="${d.abilities[a.key]??10}" oninput="recalcMods();save()">
           </div>
           <div class="badge" id="mod_${a.key}">${fmt(mod(d.abilities[a.key]))}</div>
         </div>
-        <div class="sub">
+        <div class="sub ${collapsed?'collapsed':''}" id="sub_${a.key}">
           <div class="subrow">${dagger()}<div>Sauvegarde</div>
             <input class="inp" type="number" id="sav_${a.key}" placeholder="bonus" value="${d.saveManual[a.key]??''}" oninput="save()">
           </div>
@@ -210,7 +238,7 @@ function renderAbilities(d){
 }
 function recalcMods(){ ABILITIES.forEach(a=>setT('mod_'+a.key,fmt(mod(v('abl_'+a.key))))); }
 
-/* ====== Rendu Colonne droite ====== */
+/* ====== Colonne droite ====== */
 function rightCard(id,title,inner){ return `
   <div class="card" data-cardid="${id}">
     <div class="title"><span>${title}</span><div class="handle" title="Déplacer"></div></div>
@@ -218,7 +246,6 @@ function rightCard(id,title,inner){ return `
   </div>`; }
 function renderRight(d){
   const col=qs('#rightCol'); col.innerHTML='';
-  // Identité
   col.insertAdjacentHTML('beforeend', rightCard('identity', 'Identité', `
     <label>Nom du personnage</label><input id="char_name" class="inp" type="text" value="${d.char_name}" oninput="save()">
     <div class="row row2">
@@ -231,7 +258,7 @@ function renderRight(d){
     </div>
     <div class="row row2">
       <div><label>Sous-classe</label><input id="subclass" class="inp" type="text" value="${d.subclass}" oninput="save()"></div>
-      <div><label>Bonus de maîtrise</label><input id="prof_bonus" class="inp" type="number" step="1" value="${d.prof_bonus}" oninput="save();"></div>
+      <div><label>Bonus de maîtrise</label><input id="prof_bonus" class="inp" type="number" step="1" value="${d.prof_bonus}" oninput="save()"></div>
     </div>
     <div class="hr"></div>
     <label>Inspiration héroïque</label>
@@ -241,7 +268,6 @@ function renderRight(d){
       <div class="star" id="star3" onclick="toggleStars(['star1','star2','star3'],3,'gold')">★</div>
     </div>
   `));
-  // Combat
   col.insertAdjacentHTML('beforeend', rightCard('combat', 'Combat', `
     <div class="row row3">
       <div><label>Classe d'armure</label><input id="ac" class="inp" type="number" value="${d.ac}" oninput="save()"></div>
@@ -276,19 +302,16 @@ function renderRight(d){
       </div>
     </div>
   `));
-  // Attaques & sorts
   const atkRows = (d.attacks||[]).map(a=>attackRow(a.name,a.bonus,a.dmg,a.desc)).join('');
   col.insertAdjacentHTML('beforeend', rightCard('attacks','Attaques & sorts',`
     <div id="attacks">${atkRows}</div>
     <button class="btn sec" onclick="addAttack()">+ Ajouter</button>
   `));
-  // Équipement
   const inv = (d.inventory||[]).map(v=>listRow('item',v)).join('');
   col.insertAdjacentHTML('beforeend', rightCard('inventory','Équipement & trésors',`
     <div id="inventory">${inv}</div>
     <button class="btn sec" onclick="addItem()">+ Ajouter objet</button>
   `));
-  // Traits
   const feats = (d.features||[]).map(v=>listRow('feature',v,'Nouveau trait / don / capacité')).join('');
   col.insertAdjacentHTML('beforeend', rightCard('features','Traits, dons & capacités',`
     <div id="features">${feats}</div>
@@ -364,9 +387,10 @@ window.addEventListener('load',()=>{
   qs('#importInput').addEventListener('change',e=>{const f=e.target.files[0]; if(f) importJSON(f);});
   qs('#resetBtn').addEventListener('click',resetAll);
 });
-/* expose quelques fonctions dans le scope global */
-window.recalcMods=recalcMods; window.addAttack=addAttack; window.addItem=addItem; window.addFeature=addFeature;
-window.toggleStars=toggleStars; window.save=save;
+/* exposer quelques fonctions globales */
+window.recalcMods=recalcMods;
+window.addAttack=addAttack; window.addItem=addItem; window.addFeature=addFeature;
+window.toggleStars=toggleStars; window.save=save; window.toggleAbility=toggleAbility;
 </script>
 </body>
 </html>
