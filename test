@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Test API Fiche D&D</title>
+</head>
+<body style="font-family: sans-serif; padding: 20px;">
+  <h1>Test API Fiche D&D</h1>
+
+  <button onclick="getData()">GET /api/sheet/test</button>
+  <button onclick="putData()">PUT /api/sheet/test</button>
+
+  <pre id="output" style="background:#eee; padding:10px; margin-top:20px;"></pre>
+
+  <script>
+    const endpoint = "/api/sheet/test"; // ton endpoint avec id="test"
+
+    async function getData() {
+      const res = await fetch(endpoint);
+      const data = await res.json();
+      document.getElementById("output").textContent =
+        "GET response:\n" + JSON.stringify(data, null, 2);
+    }
+
+    async function putData() {
+      const body = {
+        payload: { message: "Hello depuis PUT !" },
+        updatedAt: Date.now()
+      };
+
+      const res = await fetch(endpoint, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+
+      const data = await res.json();
+      document.getElementById("output").textContent =
+        "PUT response:\n" + JSON.stringify(data, null, 2);
+    }
+  </script>
+</body>
+</html>
