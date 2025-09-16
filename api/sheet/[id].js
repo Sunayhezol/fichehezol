@@ -1,9 +1,7 @@
-// /api/sheet/[id].js
 export const config = { runtime: 'edge' };
 
 function getIdFromUrl(req) {
   const u = new URL(req.url);
-  // /api/sheet/test  -> "test"
   const parts = u.pathname.split('/').filter(Boolean);
   return decodeURIComponent(parts[parts.length - 1] || 'default');
 }
@@ -31,19 +29,21 @@ async function kvSet(key, val) {
 
 export default async function handler(req) {
   try {
-    const id = getIdFromUrl(req);           // <-- au lieu de ctx.params.id
+    const id = getIdFromUrl(req);
     const key = `sheet:${id}`;
 
     if (req.method === 'GET') {
-      return new Response(JSON.stringify({ ok: true, data: await kvGet(key) }), {
-        headers: { 'Content-Type': 'application/json' }
+      const data = await kvGet(key);
+      return new Response(JSON.stringify({ ok: true, data }), {
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }
       });
     }
 
     if (req.method === 'PUT') {
       const b = await req.json();
-      await kvSet(key, { payload: b.payload, updatedAt: b.updatedAt || Date.now() });
-      return new Response(JSON.stringify({ ok: true }), {
+      const now = Date.now(); // horodatage serveur
+      await kvSet(key, { payload: b.payload, updatedAt: now });
+      return new Response(JSON.stringify({ ok: true, updatedAt: now }), {
         headers: { 'Content-Type': 'application/json' }
       });
     }
