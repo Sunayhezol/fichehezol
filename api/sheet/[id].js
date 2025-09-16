@@ -1,4 +1,12 @@
+// /api/sheet/[id].js
 export const config = { runtime: 'edge' };
+
+function getIdFromUrl(req) {
+  const u = new URL(req.url);
+  // /api/sheet/test  -> "test"
+  const parts = u.pathname.split('/').filter(Boolean);
+  return decodeURIComponent(parts[parts.length - 1] || 'default');
+}
 
 async function kvGet(key) {
   const url = `${process.env.KV_REST_API_URL}/get/${encodeURIComponent(key)}`;
@@ -21,23 +29,30 @@ async function kvSet(key, val) {
   });
 }
 
-export default async function handler(req, ctx) {
-  const { id } = ctx.params;
-  const key = `sheet:${id}`;
+export default async function handler(req) {
+  try {
+    const id = getIdFromUrl(req);           // <-- au lieu de ctx.params.id
+    const key = `sheet:${id}`;
 
-  if (req.method === 'GET') {
-    return new Response(JSON.stringify({ ok: true, data: await kvGet(key) }), {
+    if (req.method === 'GET') {
+      return new Response(JSON.stringify({ ok: true, data: await kvGet(key) }), {
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    if (req.method === 'PUT') {
+      const b = await req.json();
+      await kvSet(key, { payload: b.payload, updatedAt: b.updatedAt || Date.now() });
+      return new Response(JSON.stringify({ ok: true }), {
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    return new Response('Method Not Allowed', { status: 405 });
+  } catch (e) {
+    return new Response(JSON.stringify({ ok:false, error:String(e) }), {
+      status: 500,
       headers: { 'Content-Type': 'application/json' }
     });
   }
-
-  if (req.method === 'PUT') {
-    const b = await req.json();
-    await kvSet(key, { payload: b.payload, updatedAt: b.updatedAt || Date.now() });
-    return new Response(JSON.stringify({ ok: true }), {
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
-
-  return new Response('Method Not Allowed', { status: 405 });
 }
