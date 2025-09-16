@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Fiche D&D 2024 — v25 (toggle global Caractéristiques)</title>
+<title>Fiche D&D 2024 — Cloud Sync</title>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;600;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -92,7 +92,7 @@ label{font-size:13px;color:var(--muted)}
 <div class="wrapper">
   <div class="sheet">
     <h1>Fiche de Personnage — D&D 2024</h1>
-    <div class="subtitle" id="status">v25 • Toggle global Caractéristiques • 2 colonnes • Mods temps réel</div>
+    <div class="subtitle" id="status">Cloud Sync + LocalStorage</div>
 
     <div class="toolbar">
       <button class="btn" id="exportBtn">📤 Exporter</button>
@@ -125,35 +125,18 @@ label{font-size:13px;color:var(--muted)}
 
 <script>
 /* ====== Constantes & utilitaires ====== */
-const K='sheet2024_v25', ORDER='sheet2024_v25_right_order';
+const K='sheet2024_cloud', ORDER='sheet2024_order';
 const ABILITIES=[{key:'FOR',name:'Force'},{key:'DEX',name:'Dextérité'},{key:'CON',name:'Constitution'},{key:'INT',name:'Intelligence'},{key:'SAG',name:'Sagesse'},{key:'CHA',name:'Charisme'}];
 const SKILLS={FOR:['Athlétisme'],DEX:['Acrobaties','Discrétion','Escamotage'],CON:[],INT:['Arcanes','Histoire','Investigation','Nature','Religion'],SAG:['Dressage','Médecine','Perception','Intuition','Survie'],CHA:['Intimidation','Persuasion','Représentation','Tromperie']};
-const qs=(s,p=document)=>p.querySelector(s); const qsa=(s,p=document)=>[...p.querySelectorAll(s)];
-const v=(id)=>qs('#'+id)?.value??''; const setV=(id,val)=>{const el=qs('#'+id); if(el) el.value=val};
-const setT=(id,t)=>{const el=qs('#'+id); if(el) el.textContent=t};
-const i=(x,d=0)=>{const n=parseInt(x,10); return isNaN(n)?d:n};
-const mod=(n)=>Math.floor((i(n,10)-10)/2); const fmt=(n)=> (n>=0?'+':'')+n;
-const canStore=()=>{try{localStorage.setItem('__t','1');localStorage.removeItem('__t');return true}catch(_){return false}};
+const CLOUD_ID=new URLSearchParams(location.search).get('id')||'default';
+const qs=(s,p=document)=>p.querySelector(s), qsa=(s,p=document)=>[...p.querySelectorAll(s)];
+const v=id=>qs('#'+id)?.value??'', setT=(id,t)=>{const el=qs('#'+id);if(el)el.textContent=t};
+const i=(x,d=0)=>{const n=parseInt(x,10);return isNaN(n)?d:n};
+const mod=n=>Math.floor((i(n,10)-10)/2), fmt=n=>(n>=0?'+':'')+n;
 
-  /* ====== Cloud sync (Vercel + Upstash) ====== */
-const CLOUD_ID = new URLSearchParams(location.search).get('id') || 'default';
-
-async function cloudGet() {
-  const url = `/api/sheet/${encodeURIComponent(CLOUD_ID)}`;
-  // IMPORTANT : pas de cache navigateur (tablette/PC)
-  const r = await fetch(url, { cache: 'no-store' });
-  const j = await r.json();
-  return j?.data?.payload || null;
-}
-
-async function cloudPut(payload) {
-  const url = `/api/sheet/${encodeURIComponent(CLOUD_ID)}`;
-  await fetch(url, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ payload, updatedAt: Date.now() })
-  });
-}
+/* ====== Cloud Sync ====== */
+async function cloudGet(){ const r=await fetch(`/api/sheet/${encodeURIComponent(CLOUD_ID)}`,{cache:'no-store'}); const j=await r.json(); return j?.data?.payload||null; }
+async function cloudPut(payload){ await fetch(`/api/sheet/${encodeURIComponent(CLOUD_ID)}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({payload,updatedAt:Date.now()}) }); }
 
 /* ====== État par défaut ====== */
 function defaults(){
@@ -162,7 +145,7 @@ function defaults(){
     abilities:{FOR:10,DEX:10,CON:10,INT:10,SAG:10,CHA:10},
     saveManual:{FOR:'',DEX:'',CON:'',INT:'',SAG:'',CHA:''},
     skillManual:{},
-    abilitiesCompact:false, /* << état global compact/étendu */
+    abilitiesCompact:false,
     ac:12,init:2,speed:9,hp:10,hp_max:10,hit_dice:'1d8',temp_notes:'',
     attacks:[{name:'Dague',bonus:'+5',dmg:'1d4+3',desc:''}],
     inventory:['Rations (1 jour)','Corde (15 m)'],
@@ -193,47 +176,25 @@ function collect(){
   d.abilitiesCompact=isCompact();
   return d;
 }
-function save(){
-  if(!canStore()) { setStatus('⚠️ Sauvegarde inactive'); return; }
-
-  // local d’abord
-  const payload = collect();
-  localStorage.setItem(K, JSON.stringify(payload));
-  setStatus('Sauvegardé ✅');
-
-  // cloud (debounce)
-  clearTimeout(window._cloudDeb);
-  window._cloudDeb = setTimeout(async () => {
-    try {
-      await cloudPut(payload);
-      setStatus('Sauvegardé + Cloud ☁️');
-      clearTimeout(window._st);
-      window._st = setTimeout(()=>setStatus('v25 prête ✅'), 1200);
-    } catch(e){
-      setStatus('⚠️ Cloud indisponible');
-      console.error(e);
-    }
-  }, 400);
-}
-
 function setStatus(s){ setT('status',s); }
+function save(){
+  const payload=collect();
+  localStorage.setItem(K,JSON.stringify(payload));
+  setStatus('Sauvegardé ✅');
+  clearTimeout(window._cloudDeb);
+  window._cloudDeb=setTimeout(async()=>{
+    try{ await cloudPut(payload); setStatus('Sauvegardé + Cloud ☁️'); }
+    catch(e){ setStatus('⚠️ Cloud indisponible'); console.error(e); }
+  },400);
+}
 async function load(){
-  let d = null;
-
-  // 1) Essaye le cloud (no-store côté fetch dans cloudGet)
-  try {
-    const cloud = await cloudGet();
-    if (cloud) {
-      d = cloud;
-      setStatus(`Données cloud chargées ☁️ (id=${CLOUD_ID})`);
-    }
-  } catch(_) {}
-
-  // 2) Sinon fallback sur local
-  if(!d) {
-    try { d = JSON.parse(localStorage.getItem(K)); } catch(_) {}
-  }
-  if(!d) d = defaults();
+  let d=null;
+  try{
+    const cloud=await cloudGet();
+    if(cloud){ d=cloud; setStatus(`Données cloud chargées ☁️ (id=${CLOUD_ID})`); }
+  }catch(_){}
+  if(!d){ try{ d=JSON.parse(localStorage.getItem(K)); }catch(_){} }
+  if(!d) d=defaults();
 
   renderAbilities(d); renderRight(d); applyRightOrder(); initDnD();
   ABILITIES.forEach(a=>setT('mod_'+a.key,fmt(mod(d.abilities[a.key]))));
@@ -241,11 +202,7 @@ async function load(){
   syncStars(['ds_s1','ds_s2','ds_s3'], d.ds_success,'gold');
   syncStars(['ds_f1','ds_f2','ds_f3'], d.ds_failure,'black');
 
-  // appliquer l’état compact global
-  const wrap=qs('#abilities');
-  wrap.classList.toggle('abilities-compact', !!d.abilitiesCompact);
-  setToggleLabel();
-
+  const wrap=qs('#abilities'); wrap.classList.toggle('abilities-compact', !!d.abilitiesCompact); setToggleLabel();
   localStorage.setItem(K,JSON.stringify(d));
 }
 
@@ -259,7 +216,7 @@ function toggleCompact(){
   const wrap=qs('#abilities');
   wrap.classList.toggle('abilities-compact');
   setToggleLabel();
-  save(); // mémorise l’état
+  save();
 }
 
 /* ====== Caractéristiques (gauche) ====== */
@@ -432,11 +389,18 @@ function exportJSON(){
 function importJSON(file){
   const r=new FileReader(); r.onload=e=>{try{const data=JSON.parse(e.target.result);localStorage.setItem(K,JSON.stringify(data));load();setStatus('Import réussi ✅')}catch{setStatus('❌ Fichier invalide')}}; r.readAsText(file);
 }
-function resetAll(){ if(confirm('Réinitialiser la fiche ?')){localStorage.removeItem(K);load();} }
+async function resetAll(){
+  if(confirm('Réinitialiser la fiche ?')){
+    const d=defaults();
+    localStorage.setItem(K,JSON.stringify(d));
+    try{ await cloudPut(d); }catch(e){ console.warn('Cloud reset fail',e); }
+    load();
+  }
+}
 
 /* ====== Boot ====== */
-window.addEventListener('load',()=>{
-  load();
+window.addEventListener('load', async ()=>{
+  await load();
   qs('#exportBtn').addEventListener('click',exportJSON);
   qs('#importBtn').addEventListener('click',()=>qs('#importInput').click());
   qs('#importInput').addEventListener('change',e=>{const f=e.target.files[0]; if(f) importJSON(f);});
