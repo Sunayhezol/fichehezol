@@ -100,6 +100,7 @@ label{font-size:13px;color:var(--muted)}
         <input type="file" id="importInput" accept="application/json" hidden>
         <button class="btn sec" id="importBtn">📥 Importer</button>
       </label>
+      <button class="btn sec" id="syncBtn">🔄 Synchroniser</button>
       <button class="btn dan" id="resetBtn">🧹 Réinitialiser</button>
     </div>
 
@@ -155,6 +156,10 @@ function defaults(){
   return o;
 }
 
+/* ====== Snapshot pour la synchro visuelle ====== */
+let CURRENT_SNAPSHOT = "";
+const snapshotOf = (d) => JSON.stringify(d);
+
 /* ====== Persistance ====== */
 function isCompact(){ return qs('#abilities').classList.contains('abilities-compact'); }
 function collect(){
@@ -187,6 +192,26 @@ function save(){
     catch(e){ setStatus('⚠️ Cloud indisponible'); console.error(e); }
   },400);
 }
+
+/* ====== Application d’un état + mémorisation snapshot ====== */
+function applyAll(d){
+  renderAbilities(d);
+  renderRight(d);
+  applyRightOrder();
+  initDnD();
+
+  ABILITIES.forEach(a=>setT('mod_'+a.key,fmt(mod(d.abilities[a.key]))));
+  syncStars(['star1','star2','star3'], d.inspirationStars,'gold');
+  syncStars(['ds_s1','ds_s2','ds_s3'], d.ds_success,'gold');
+  syncStars(['ds_f1','ds_f2','ds_f3'], d.ds_failure,'black');
+
+  const wrap=qs('#abilities'); wrap.classList.toggle('abilities-compact', !!d.abilitiesCompact); setToggleLabel();
+
+  localStorage.setItem(K,JSON.stringify(d));
+  CURRENT_SNAPSHOT = snapshotOf(d);
+}
+
+/* ====== Chargement (priorité cloud) ====== */
 async function load(){
   let d=null;
   try{
@@ -195,15 +220,20 @@ async function load(){
   }catch(_){}
   if(!d){ try{ d=JSON.parse(localStorage.getItem(K)); }catch(_){} }
   if(!d) d=defaults();
+  applyAll(d);
+}
 
-  renderAbilities(d); renderRight(d); applyRightOrder(); initDnD();
-  ABILITIES.forEach(a=>setT('mod_'+a.key,fmt(mod(d.abilities[a.key]))));
-  syncStars(['star1','star2','star3'], d.inspirationStars,'gold');
-  syncStars(['ds_s1','ds_s2','ds_s3'], d.ds_success,'gold');
-  syncStars(['ds_f1','ds_f2','ds_f3'], d.ds_failure,'black');
-
-  const wrap=qs('#abilities'); wrap.classList.toggle('abilities-compact', !!d.abilitiesCompact); setToggleLabel();
-  localStorage.setItem(K,JSON.stringify(d));
+/* ====== Polling/Sync ====== */
+async function pollOnce(){
+  try{
+    const cloud = await cloudGet(); // no-store
+    if (!cloud) return;
+    const snapCloud = snapshotOf(cloud);
+    if (snapCloud !== CURRENT_SNAPSHOT){
+      applyAll(cloud);
+      setStatus('Mise à jour depuis le cloud ☁️');
+    }
+  }catch(e){ /* silencieux */ }
 }
 
 /* ====== Toggle global compact ====== */
@@ -401,13 +431,21 @@ async function resetAll(){
 /* ====== Boot ====== */
 window.addEventListener('load', async ()=>{
   await load();
+
+  // UI handlers
   qs('#exportBtn').addEventListener('click',exportJSON);
   qs('#importBtn').addEventListener('click',()=>qs('#importInput').click());
   qs('#importInput').addEventListener('change',e=>{const f=e.target.files[0]; if(f) importJSON(f);});
   qs('#resetBtn').addEventListener('click',resetAll);
   qs('#toggleCompactBtn').addEventListener('click',toggleCompact);
+  qs('#syncBtn').addEventListener('click', pollOnce);
+
+  // Polling auto
+  clearInterval(window._poll);
+  window._poll = setInterval(pollOnce, 5000);
 });
-/* expose global */
+
+/* expose global (utile si besoin depuis HTML inline) */
 window.recalcMods=recalcMods; window.addAttack=addAttack; window.addItem=addItem; window.addFeature=addFeature;
 window.toggleStars=toggleStars; window.save=save; window.toggleCompact=toggleCompact;
 </script>
