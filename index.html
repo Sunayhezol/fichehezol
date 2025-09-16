@@ -135,6 +135,26 @@ const i=(x,d=0)=>{const n=parseInt(x,10); return isNaN(n)?d:n};
 const mod=(n)=>Math.floor((i(n,10)-10)/2); const fmt=(n)=> (n>=0?'+':'')+n;
 const canStore=()=>{try{localStorage.setItem('__t','1');localStorage.removeItem('__t');return true}catch(_){return false}};
 
+  /* ====== Cloud sync (Vercel + Upstash) ====== */
+const CLOUD_ID = new URLSearchParams(location.search).get('id') || 'default';
+
+async function cloudGet() {
+  const url = `/api/sheet/${encodeURIComponent(CLOUD_ID)}`;
+  // IMPORTANT : pas de cache navigateur (tablette/PC)
+  const r = await fetch(url, { cache: 'no-store' });
+  const j = await r.json();
+  return j?.data?.payload || null;
+}
+
+async function cloudPut(payload) {
+  const url = `/api/sheet/${encodeURIComponent(CLOUD_ID)}`;
+  await fetch(url, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ payload, updatedAt: Date.now() })
+  });
+}
+
 /* ====== État par défaut ====== */
 function defaults(){
   const o={char_name:'',class_only:'',level:1,background:'',race:'',subclass:'',prof_bonus:2,
@@ -175,13 +195,46 @@ function collect(){
 }
 function save(){
   if(!canStore()) { setStatus('⚠️ Sauvegarde inactive'); return; }
-  localStorage.setItem(K,JSON.stringify(collect()));
-  setStatus('Sauvegardé ✅'); clearTimeout(window._st); window._st=setTimeout(()=>setStatus('v25 prête ✅'),1000);
+
+  // local d’abord
+  const payload = collect();
+  localStorage.setItem(K, JSON.stringify(payload));
+  setStatus('Sauvegardé ✅');
+
+  // cloud (debounce)
+  clearTimeout(window._cloudDeb);
+  window._cloudDeb = setTimeout(async () => {
+    try {
+      await cloudPut(payload);
+      setStatus('Sauvegardé + Cloud ☁️');
+      clearTimeout(window._st);
+      window._st = setTimeout(()=>setStatus('v25 prête ✅'), 1200);
+    } catch(e){
+      setStatus('⚠️ Cloud indisponible');
+      console.error(e);
+    }
+  }, 400);
 }
+
 function setStatus(s){ setT('status',s); }
-function load(){
-  let d=null; try{d=JSON.parse(localStorage.getItem(K))}catch(_){}
-  if(!d) d=defaults();
+async function load(){
+  let d = null;
+
+  // 1) Essaye le cloud (no-store côté fetch dans cloudGet)
+  try {
+    const cloud = await cloudGet();
+    if (cloud) {
+      d = cloud;
+      setStatus(`Données cloud chargées ☁️ (id=${CLOUD_ID})`);
+    }
+  } catch(_) {}
+
+  // 2) Sinon fallback sur local
+  if(!d) {
+    try { d = JSON.parse(localStorage.getItem(K)); } catch(_) {}
+  }
+  if(!d) d = defaults();
+
   renderAbilities(d); renderRight(d); applyRightOrder(); initDnD();
   ABILITIES.forEach(a=>setT('mod_'+a.key,fmt(mod(d.abilities[a.key]))));
   syncStars(['star1','star2','star3'], d.inspirationStars,'gold');
