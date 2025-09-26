@@ -1,14 +1,23 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Fiche D&D 2024 — Cloud Sync</title>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0"/>
+<title>Fiche D&D 2024 — tablette</title>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;600;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
 <style>
 :root{
   --violet:#281a3f; --black:#0b0a0d; --white:#f3efe7;
-  --gold:#c9a84a; --gold2:#f1d76b; --muted:#c9c5bb; --gap:16px;
+  --gold:#c9a84a; --gold2:#f1d76b; --muted:#c9c5bb;
+  --accent-red:#e54848; --accent-ylw:#ffe658; --accent-grn:#54c082;
+  --gap:14px; --radius:22px;
+  --rim-color: #2596be
+  --card-pad: 16px;       /* padding interne uniformisé de toutes les .card */
+  --rim-gap: 6px;         /* espace entre le liseré et le contenu */
 }
 *{box-sizing:border-box;min-width:0}
 html,body{height:100%}
@@ -20,79 +29,153 @@ body{
     linear-gradient(180deg,#0a090c,var(--violet) 45%,#0a090c 100%);
   background-attachment:fixed;
 }
-.wrapper{max-width:1180px;margin:28px auto;padding:0 14px}
-.sheet{position:relative;background:linear-gradient(180deg,rgba(11,10,13,.7),rgba(11,10,13,.55));
-  border:3px solid #000;border-radius:28px;padding:22px;box-shadow:0 0 50px rgba(0,0,0,.75),inset 0 0 30px rgba(0,0,0,.7)}
-h1{font-family:"IM Fell English",serif;font-size:32px;text-align:center;margin:0 0 10px;color:var(--white);text-shadow:0 0 10px rgba(0,0,0,.8)}
-h1:after{content:"";display:block;height:3px;margin:10px auto 0;width:260px;
-  background:linear-gradient(90deg,transparent,var(--gold),var(--gold2),var(--gold),transparent);border-radius:3px;box-shadow:0 0 12px rgba(241,215,107,.35)}
-.subtitle{color:var(--muted);text-align:center;margin-bottom:16px}
-.toolbar{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:8px 0 16px}
-.btn{border:1px solid #000;border-radius:12px;padding:9px 14px;background:linear-gradient(180deg,#22192f,#120c1b);color:var(--white);font-weight:700;cursor:pointer}
+
+/* Attaques : 3 colonnes tablette */
+#attacks { display:grid; grid-template-columns:repeat(3,1fr); gap:var(--gap); }
+@media (max-width: 900px) { #attacks { grid-template-columns:1fr 1fr; } }
+@media (max-width: 600px) { #attacks { grid-template-columns:1fr; } }
+
+/* ===== shell ===== */
+.wrapper{max-width:1100px;margin:24px auto;padding:0 14px}
+.sheet{
+  position:relative;background:linear-gradient(180deg,rgba(11,10,13,.7),rgba(11,10,13,.55));
+  border:3px solid #000;border-radius:28px;padding:18px;
+  box-shadow:0 0 50px rgba(0,0,0,.75),inset 0 0 30px rgba(0,0,0,.7)
+}
+h1{
+  font-family:"IM Fell English",serif;font-size:28px;text-align:center;margin:0 0 8px;color:var(--white);
+  text-shadow:0 0 10px rgba(0,0,0,.8)
+}
+h1:after{
+  content:"";display:block;height:3px;margin:8px auto 0;width:240px;
+  background:linear-gradient(90deg,transparent,var(--gold),var(--gold2),var(--gold),transparent);
+  border-radius:3px;box-shadow:0 0 12px rgba(241,215,107,.35)
+}
+.subtitle{color:var(--muted);text-align:center;margin-bottom:10px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:6px 0 12px}
+.btn{border:1px solid #000;border-radius:12px;padding:8px 12px;background:linear-gradient(180deg,#22192f,#120c1b);color:var(--white);font-weight:700;cursor:pointer}
 .btn.sec{background:linear-gradient(180deg,#1b1a1e,#0f0e11)}
 .btn.dan{background:linear-gradient(180deg,#3a1313,#1c0b0b)}
 .btn.sm{padding:6px 10px;font-size:14px}
 .hr{height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:10px 0;border-radius:1px}
-/* Grid */
-.board{display:grid;grid-template-columns:repeat(3,minmax(280px,1fr));gap:var(--gap);align-items:start}
-.left-area{grid-column:1/span 2}
-.right-col{grid-column:3;display:flex;flex-direction:column;gap:var(--gap)}
-@media (max-width:1100px){.board{grid-template-columns:repeat(2,minmax(260px,1fr))}.left-area,.right-col{grid-column:1/span 2}}
-@media (max-width:720px){.board{grid-template-columns:1fr}.left-area,.right-col{grid-column:1}.btn{width:100%}}
-/* Card + gold ornaments */
-.card{position:relative;background:
-  radial-gradient(120% 120% at 50% -20%, rgba(241,215,107,.07), transparent 60%),
-  linear-gradient(180deg,rgba(40,26,63,.88),rgba(17,12,26,.88));
-  border:3px solid #000;border-radius:22px;padding:14px;box-shadow:inset 0 0 22px rgba(0,0,0,.8),0 10px 26px rgba(0,0,0,.75);overflow:hidden}
-.card:before{content:"";position:absolute;inset:8px;border-radius:16px;border:2px solid rgba(201,168,74,.65);box-shadow:inset 0 0 10px rgba(241,215,107,.15);pointer-events:none}
-.card:after{content:"";position:absolute;inset:0;border-radius:22px;background:
-  radial-gradient(30px 30px at 0 0, rgba(201,168,74,.5), transparent 60%),
-  radial-gradient(30px 30px at 100% 0, rgba(201,168,74,.5), transparent 60%),
-  radial-gradient(30px 30px at 0 100%, rgba(201,168,74,.5), transparent 60%),
-  radial-gradient(30px 30px at 100% 100%, rgba(201,168,74,.5), transparent 60%),
-  radial-gradient(50% 50% at 50% 0%, rgba(0,0,0,.25), transparent 70%);
-  mix-blend-mode:overlay;pointer-events:none}
-.title{font-family:"IM Fell English",serif;font-size:16px;text-align:center;margin:0 0 10px;letter-spacing:.5px;text-shadow:0 0 6px rgba(0,0,0,.6);position:relative;padding-right:28px}
-.title span{padding:0 10px;background:linear-gradient(180deg,rgba(201,168,74,.22),rgba(201,168,74,.06));border:1px solid rgba(201,168,74,.35);border-radius:8px;box-shadow:inset 0 0 6px rgba(241,215,107,.15)}
-.title:before,.title:after{content:"◆";color:var(--gold2);margin:0 8px;text-shadow:0 0 8px rgba(241,215,107,.4)}
-.handle{position:absolute;top:0;right:6px;height:32px;width:22px;display:flex;align-items:center;justify-content:center;color:var(--muted);cursor:grab}
-.handle:after{content:"⋮⋮";letter-spacing:2px}
-label{font-size:13px;color:var(--muted)}
-.inp,.ta{width:100%;border:1px solid #000;border-radius:12px;padding:9px 10px;font-size:16px;background:linear-gradient(180deg,#160f22,#0e0a14);color:var(--white);box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
+
+/* ===== cartes ===== */
+.card{
+  position:relative;
+  background:linear-gradient(180deg,rgba(40,26,63,.88),rgba(17,12,26,.88));
+  border:3px solid #000;
+  border-radius:var(--radius);
+  padding:var(--card-pad);                 /* ← au lieu de 12px */
+  box-shadow:inset 0 0 22px rgba(0,0,0,.8),0 10px 26px rgba(0,0,0,.55);
+  overflow:hidden;
+}
+.card::before{  
+  content:"";
+  position:absolute;
+  /* le liseré est désormais placé AU-DELÀ du padding */
+  inset: calc(var(--card-pad) + var(--rim-gap));   /* ← clé pour décoller le liseré */
+  border-radius: calc(var(--radius) - var(--rim-gap));
+  border:2px solid var(--rim-color);
+  pointer-events:none;
+}
 .ta{min-height:90px;resize:vertical}
-.row{display:grid;gap:12px}
+
+.row{display:grid;gap:10px}
 .row2{grid-template-columns:1fr 1fr}
 .row3{grid-template-columns:1fr 1fr 1fr}
-/* Caractéristiques en 2 colonnes */
-.abilities-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.abilities-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-@media (max-width:720px){.abilities-grid{grid-template-columns:1fr}}
-.abilities-compact .sub{display:none} /* Vue compacte globale */
-.ability{border:2px solid #000;border-radius:16px;padding:10px;background:linear-gradient(180deg,rgba(40,26,63,.85),rgba(17,12,26,.85));box-shadow:inset 0 0 16px rgba(0,0,0,.8)}
-.ability-h{display:grid;grid-template-columns:1fr 80px;gap:10px;align-items:end}
-.badge{border:1px solid #000;border-radius:12px;padding:8px;text-align:center;font-weight:700;color:var(--white);background:linear-gradient(180deg,rgba(201,168,74,.22),rgba(201,168,74,.06));box-shadow:inset 0 0 8px rgba(241,215,107,.2)}
+
+/* ===== grille tablette portrait ===== */
+/* On passe en zones pour forcer : Caracs (gauche) ; Pièces sous Caracs (même largeur) ; Droite avec Identité + Combat */
+.header-grid{
+  display:grid; gap:var(--gap);
+  grid-template-columns: 2fr 1fr;
+  grid-template-areas:
+    "caracs right"
+    "coins  right";
+}
+.caracs{ grid-area: caracs; border-radius:16px; padding:10px; }
+.rightcol{ grid-area: right; display:grid; gap:var(--gap) }
+
+/* Zone “Pièces” (nouvelle catégorie, même largeur que Caractéristiques) */
+.pieces{ grid-area: coins; }
+.coins-grid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:10px;
+}
+.coins-grid label{
+  font-size:13px;
+  color:var(--muted);
+  display:block;
+  margin-bottom:4px;
+  text-align:center;
+}
+.coins-grid input{
+  text-align:center;
+  font-weight:700;
+}
+
+.abilities-grid{ display:grid; gap:10px; grid-template-columns: repeat(3,minmax(0,1fr)); }
+@media (max-width:780px){ .abilities-grid{grid-template-columns: repeat(3,minmax(0,1fr));} }
+.ability{
+  border:2px solid #000;border-radius:14px;padding:10px;background:linear-gradient(180deg,rgba(40,26,63,.85),rgba(17,12,26,.85));
+  box-shadow:inset 0 0 16px rgba(0,0,0,.8)
+}
+.ability-h{ display:grid;grid-template-columns:1fr 60px 32px;gap:8px;align-items:end }
+.toggle-mini{ border:1px solid #000;border-radius:8px;padding:4px 6px;font-size:12px;background:linear-gradient(180deg,#1b1a1e,#0f0e11);color:#fff;cursor:pointer }
+.badge{
+  border:1px solid #000;border-radius:10px;padding:4px 6px;min-width:1.5em;display:inline-block;text-align:center;
+  font-weight:700;color:var(--white);background:linear-gradient(180deg,rgba(201,168,74,.22),rgba(201,168,74,.06));
+  box-shadow:inset 0 0 8px rgba(241,215,107,.2);flex:0 0 auto;
+}
 .sub{margin-top:8px;border-top:1px solid rgba(201,168,74,.35);padding-top:8px}
-.subrow{display:grid;grid-template-columns:28px 1fr 110px;gap:8px;align-items:center;margin:3px 0}
+.sub.hidden{display:none}
+.subrow{display:grid;grid-template-columns:28px 1fr auto;gap:8px;align-items:center;margin:3px 0;}
+.subrow input.inp{width:42px;min-width:42px;max-width:42px;padding:5px 4px;text-align:center;justify-self:end}
+.subrow input.inp[type="number"]::-webkit-outer-spin-button,
+.subrow input.inp[type="number"]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+.subrow input.inp[type="number"]{ -moz-appearance:textfield; }
 .dagger{text-align:center;font-size:18px;opacity:.95}
+
+.id-card{border-color:#000}
+
+.block-full{grid-column:1/-1;margin-top:var(--gap)}
+.block-half{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);margin-top:var(--gap)}
+@media (max-width:720px){
+  .header-grid{
+    grid-template-columns:1fr;
+    grid-template-areas:
+      "caracs"
+      "coins"
+      "right";
+  }
+  .block-half{grid-template-columns:1fr}
+}
+
 /* stars */
 .stars{display:flex;gap:6px;flex-wrap:wrap;padding:4px 0 2px}
-.star{width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:20px;border:1px solid #000;border-radius:10px;background:linear-gradient(180deg,#1f162b,#0f0e11);color:var(--white);cursor:pointer;user-select:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.06);flex:0 0 auto}
+.star{width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:18px;border:1px solid #000;border-radius:8px;background:linear-gradient(180deg,#1f162b,#0f0e11);color:var(--white);cursor:pointer;user-select:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.06);flex:0 0 auto}
 .star.active.gold{background:linear-gradient(180deg,var(--gold2),var(--gold));color:#1a1406;border-color:#1a1406}
 .star.active.black{background:linear-gradient(180deg,#2a2a2a,#111);color:#fff;border-color:#000}
-/* list rows */
+
+/* lignes de listes */
 .list{display:grid;grid-template-columns:1fr 42px;gap:10px;align-items:center;margin-bottom:8px}
 .icon{background:linear-gradient(180deg,#1b1a1e,#0f0e11);color:var(--white);border:1px solid #000;border-radius:10px;padding:8px 10px;cursor:pointer}
 .icon.del{background:linear-gradient(180deg,#3a1313,#1c0b0b)}
-.atk{display:grid;grid-template-columns:1.1fr 80px 1fr 42px;gap:10px;align-items:start;margin-bottom:10px}
-@media (max-width:720px){.atk{grid-template-columns:1fr}}
-.atk-desc{grid-column:1/-2}
+
+.atk{
+  display:flex;flex-direction:column;gap:8px;padding:8px;border:2px solid #000;border-radius:var(--radius);
+  background:linear-gradient(180deg,rgba(40,26,63,.85),rgba(17,12,26,.85));
+  box-shadow:inset 0 0 16px rgba(0,0,0,.8);
+}
+.atk textarea { min-height:60px; }
 </style>
 </head>
 <body>
 <div class="wrapper">
   <div class="sheet">
-    <h1>Fiche de Personnage — D&D 2024</h1>
-    <div class="subtitle" id="status">Cloud Sync + LocalStorage</div>
+    <h1>Fiche de Personnage — D&D 2024 test 2003</h1>
+    <div class="subtitle" id="status">v tablette • mise en page fixe • <span id="dbg"></span></div>
 
     <div class="toolbar">
       <button class="btn" id="exportBtn">📤 Exporter</button>
@@ -100,267 +183,481 @@ label{font-size:13px;color:var(--muted)}
         <input type="file" id="importInput" accept="application/json" hidden>
         <button class="btn sec" id="importBtn">📥 Importer</button>
       </label>
-      <button class="btn sec" id="syncBtn">🔄 Synchroniser</button>
+      <button class="btn sec" id="newBtn">🆕 Nouvelle fiche</button>
+      <button class="btn sec" id="linkBtn">🔗 Copier le lien</button>
+      <button class="btn sec" id="syncBtn">☁️ Sync now</button>
+      <button class="btn sec" id="pullBtn">↻ Forcer refresh</button>
       <button class="btn dan" id="resetBtn">🧹 Réinitialiser</button>
     </div>
 
-    <div class="board">
-      <div class="left-area">
-        <div class="card" id="abilitiesCard">
-          <div class="title"><span>Caractéristiques</span></div>
+    <!-- ===== HEADER (caracs + pièces à gauche ; identité+combat à droite) ===== -->
+    <div class="header-grid">
+      <!-- Caractéristiques -->
+      <div class="card caracs">
+        <div class="title"><span>Caractéristiques</span></div>
+        <div id="abilities" class="abilities-grid"></div>
+      </div>
 
-          <div class="abilities-header">
-            <div style="color:var(--muted);font-size:13px">Les modificateurs se calculent automatiquement.</div>
-            <button class="btn sm sec" id="toggleCompactBtn">Vue compacte</button>
+      <!-- Pièces (nouvelle catégorie, même largeur que Caractéristiques, sous elles) -->
+      <div class="card pieces">
+        <div class="title"><span>Pièces</span></div>
+        <div class="coins-grid">
+          <div>
+            <label>PC</label>
+            <input id="coin_pc" class="inp" type="number" inputmode="numeric" value="0" oninput="save()">
           </div>
-
-          <div id="abilities" class="abilities-grid"></div>
-
+          <div>
+            <label>PA</label>
+            <input id="coin_pa" class="inp" type="number" inputmode="numeric" value="0" oninput="save()">
+          </div>
+          <div>
+            <label>PE</label>
+            <input id="coin_pe" class="inp" type="number" inputmode="numeric" value="0" oninput="save()">
+          </div>
+          <div>
+            <label>PO</label>
+            <input id="coin_po" class="inp" type="number" inputmode="numeric" value="42" oninput="save()">
+          </div>
+          <div>
+            <label>PP</label>
+            <input id="coin_pp" class="inp" type="number" inputmode="numeric" value="0" oninput="save()">
+          </div>
         </div>
       </div>
 
-      <div class="right-col" id="rightCol"><!-- rempli par JS --></div>
+      <!-- Colonne droite -->
+      <div class="rightcol">
+        <div class="card id-card">
+          <div class="title"><span>Identité</span></div>
+          <label>Nom du personnage</label><input id="char_name" class="inp" type="text" oninput="save()">
+          <div class="row row2">
+            <div><label>Classe</label><input id="class_only" class="inp" type="text" oninput="save()"></div>
+            <div><label>Niveau</label><input id="level" class="inp" type="number" min="1" oninput="save()"></div>
+          </div>
+          <div class="row row2">
+            <div><label>Origine/Background</label><input id="background" class="inp" type="text" oninput="save()"></div>
+            <div><label>Race</label><input id="race" class="inp" type="text" oninput="save()"></div>
+          </div>
+          <div class="row row2">
+            <div><label>Sous-classe</label><input id="subclass" class="inp" type="text" oninput="save()"></div>
+            <div><label>Bonus de maîtrise</label><input id="prof_bonus" class="inp" type="number" step="1" oninput="save()"></div>
+          </div>
+          <div class="hr"></div>
+          <label>Inspiration héroïque</label>
+          <div class="stars">
+            <div class="star" id="star1" onclick="toggleStars(['star1','star2','star3'],1,'gold')">★</div>
+            <div class="star" id="star2" onclick="toggleStars(['star1','star2','star3'],2,'gold')">★</div>
+            <div class="star" id="star3" onclick="toggleStars(['star1','star2','star3'],3,'gold')">★</div>
+          </div>
+        </div>
+
+        <div class="card combat-card">
+          <div class="title"><span>Combat</span></div>
+          <div class="row row3">
+            <div><label>Classe d'armure</label><input id="ac" class="inp" type="number" oninput="save()"></div>
+            <div><label>Initiative</label><input id="init" class="inp" type="number" oninput="save()"></div>
+            <div><label>Vitesse (m)</label><input id="speed" class="inp" type="number" oninput="save()"></div>
+          </div>
+          <div class="row row2">
+            <div><label>Points de vie (actuels / max)</label>
+              <div class="row" style="grid-template-columns:1fr auto 1fr">
+                <input id="hp" class="inp" type="number" oninput="save()"><span style="place-self:center">/</span>
+                <input id="hp_max" class="inp" type="number" oninput="save()">
+              </div>
+            </div>
+            <div><label>Dés de vie (ex. 3d8)</label><input id="hit_dice" class="inp" type="text" oninput="save()"></div>
+          </div>
+          <div class="row row2">
+            <div><label>État temporaire / Notes</label><input id="temp_notes" class="inp" type="text" oninput="save()"></div>
+            <div>
+              <label>Jets contre la mort</label>
+              <div style="color:var(--muted);font-size:13px">Succès</div>
+              <div class="stars">
+                <div class="star" id="ds_s1" onclick="toggleStars(['ds_s1','ds_s2','ds_s3'],1,'gold')">★</div>
+                <div class="star" id="ds_s2" onclick="toggleStars(['ds_s1','ds_s2','ds_s3'],2,'gold')">★</div>
+                <div class="star" id="ds_s3" onclick="toggleStars(['ds_s1','ds_s2','ds_s3'],3,'gold')">★</div>
+              </div>
+              <div style="color:var(--muted);font-size:13px">Échecs</div>
+              <div class="stars">
+                <div class="star" id="ds_f1" onclick="toggleStars(['ds_f1','ds_f2','ds_f3'],1,'black')">★</div>
+                <div class="star" id="ds_f2" onclick="toggleStars(['ds_f1','ds_f2','ds_f3'],2,'black')">★</div>
+                <div class="star" id="ds_f3" onclick="toggleStars(['ds_f1','ds_f2','ds_f3'],3,'black')">★</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div> <!-- /rightcol -->
+    </div> <!-- /header-grid -->
+
+    <!-- Attaques & sorts : pleine largeur -->
+    <div class="block-full">
+      <div class="card">
+        <div class="title"><span>Attaques & sorts</span></div>
+        <div id="attacks"></div>
+        <button class="btn sec" onclick="addAttack()">+ Ajouter</button>
+      </div>
     </div>
-  </div>
-</div>
+
+    <!-- Deux colonnes 50/50 -->
+    <div class="block-half">
+      <div class="card">
+        <div class="title"><span>Équipement & trésors</span></div>
+        <div id="inventory"></div>
+        <button class="btn sec" onclick="addItem()">+ Ajouter objet</button>
+      </div>
+      <div class="card">
+        <div class="title"><span>Traits, dons & capacités</span></div>
+        <div id="features"></div>
+        <button class="btn sec" onclick="addFeature()">+ Ajouter capacité</button>
+      </div>
+    </div>
+
+  </div><!-- /sheet -->
+</div><!-- /wrapper -->
 
 <script>
 /* ====== Constantes & utilitaires ====== */
-const K='sheet2024_cloud', ORDER='sheet2024_order';
-const ABILITIES=[{key:'FOR',name:'Force'},{key:'DEX',name:'Dextérité'},{key:'CON',name:'Constitution'},{key:'INT',name:'Intelligence'},{key:'SAG',name:'Sagesse'},{key:'CHA',name:'Charisme'}];
-const SKILLS={FOR:['Athlétisme'],DEX:['Acrobaties','Discrétion','Escamotage'],CON:[],INT:['Arcanes','Histoire','Investigation','Nature','Religion'],SAG:['Dressage','Médecine','Perception','Intuition','Survie'],CHA:['Intimidation','Persuasion','Représentation','Tromperie']};
-const CLOUD_ID=new URLSearchParams(location.search).get('id')||'default';
-const qs=(s,p=document)=>p.querySelector(s), qsa=(s,p=document)=>[...p.querySelectorAll(s)];
-const v=id=>qs('#'+id)?.value??'', setT=(id,t)=>{const el=qs('#'+id);if(el)el.textContent=t};
-const i=(x,d=0)=>{const n=parseInt(x,10);return isNaN(n)?d:n};
-const mod=n=>Math.floor((i(n,10)-10)/2), fmt=n=>(n>=0?'+':'')+n;
+// ID de fiche depuis l'URL (normalisée)
+const CLOUD_ID = (new URLSearchParams(location.search).get('id') || 'default')
+  .trim().toLowerCase();
 
-/* ====== Cloud Sync ====== */
-async function cloudGet(){ const r=await fetch(`/api/sheet/${encodeURIComponent(CLOUD_ID)}`,{cache:'no-store'}); const j=await r.json(); return j?.data?.payload||null; }
-async function cloudPut(payload){ await fetch(`/api/sheet/${encodeURIComponent(CLOUD_ID)}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({payload,updatedAt:Date.now()}) }); }
+const K_BASE = 'sheet2024_tablet';
+const K = `${K_BASE}:${CLOUD_ID}`;  // une clé locale par fiche
 
-/* ====== État par défaut ====== */
+const ABILITIES=[
+  {key:'FOR',name:'Force', skills:['Athlétisme']},
+  {key:'DEX',name:'Dextérité', skills:['Acrobaties','Discrétion','Escamotage']},
+  {key:'CON',name:'Constitution', skills:[]},
+  {key:'INT',name:'Intelligence', skills:['Arcanes','Histoire','Investigation','Nature','Religion']},
+  {key:'SAG',name:'Sagesse', skills:['Dressage','Médecine','Perception','Intuition','Survie']},
+  {key:'CHA',name:'Charisme', skills:['Intimidation','Persuasion','Représentation','Tromperie']},
+];
+
+const qs=(s,p=document)=>p.querySelector(s);
+const qsa=(s,p=document)=>[...p.querySelectorAll(s)];
+const num=(x,d=0)=>{const n=parseInt(x,10);return isNaN(n)?d:n};
+const mod=(n)=>Math.floor((num(n,10)-10)/2);
+const fmt=(n)=> (n>=0?'+':'')+n;
+const canStore=()=>{try{localStorage.setItem('__t','1');localStorage.removeItem('__t');return true}catch(_){return false}};
+const setV = (id, val) => { const el = qs('#' + id); if (el) el.value = val; };
+const setT = (id, t)  => { const el = qs('#' + id); if (el) el.textContent = t; };
+const nowIso = () => new Date().toLocaleTimeString();
+const randId = () => Math.random().toString(36).slice(2, 8);
+
+  // --- Couleur de la bulle selon le bonus ---
+function badgeColor(val) {
+  if (val <= 0) return '#000000';   // noir
+  if (val <= 2) return '#2c0061';
+  if (val <= 4) return '#61006f';
+  if (val <= 6) return '#96007d';
+  return '#ff0099';
+}
+// --- Coloration des bulles (sauvegardes + compétences) selon la valeur ---
+function colorizeBonusInput(el){
+  const v = parseInt(el.value, 10);
+  const n = isNaN(v) ? 0 : v;
+  el.style.background = badgeColor(n);
+  el.style.color = '#ffffff';
+  el.style.borderColor = '#000';
+}
+
+function colorizeAllBonusBubbles(){
+  // cible toutes les bulles de la section ouverte: sauvegardes + compétences
+  qsa('#abilities .subrow input.inp').forEach(el => {
+    colorizeBonusInput(el);
+    // on attache l'écouteur une seule fois
+    if (!el._colored) {
+      el.addEventListener('input', () => colorizeBonusInput(el));
+      el._colored = true;
+    }
+  });
+}
+
+/* ====== Cloud (no store + cache-buster) ====== */
+async function cloudGet(){
+  try{
+    const r = await fetch(`/api/sheet/${encodeURIComponent(CLOUD_ID)}?t=${Date.now()}`, { cache:'no-store' });
+    if(!r.ok) throw new Error(`HTTP ${r.status}`);
+    const j = await r.json();
+    return j?.data || null; // {payload, updatedAt}
+  }catch(e){
+    console.warn('cloudGet error:', e);
+    setStatus('⚠️ Cloud indisponible');
+    return null;
+  }
+}
+async function cloudPut(payload){
+  try{
+    const body = { payload, updatedAt: Date.now() };
+    const r = await fetch(`/api/sheet/${encodeURIComponent(CLOUD_ID)}`,{
+      method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(body)
+    });
+    if(!r.ok) throw new Error(`HTTP ${r.status}`);
+    setStatus(`Cloud sync OK ${nowIso()} ☁️`);
+  }catch(e){
+    console.error('cloudPut error:', e);
+    setStatus('⚠️ Échec sync cloud');
+  }
+}
+
+/* ====== modèle ====== */
 function defaults(){
-  const o={char_name:'',class_only:'',level:1,background:'',race:'',subclass:'',prof_bonus:2,
+  const o={
+    char_name:'',class_only:'',level:1,background:'',race:'',subclass:'',prof_bonus:2,
     inspirationStars:0,ds_success:0,ds_failure:0,
     abilities:{FOR:10,DEX:10,CON:10,INT:10,SAG:10,CHA:10},
     saveManual:{FOR:'',DEX:'',CON:'',INT:'',SAG:'',CHA:''},
-    skillManual:{},
-    abilitiesCompact:false,
+    skillManual:{},  // { 'Acrobaties': '', ... }
+    collapsed:{FOR:false,DEX:false,CON:false,INT:false,SAG:false,CHA:false},
     ac:12,init:2,speed:9,hp:10,hp_max:10,hit_dice:'1d8',temp_notes:'',
     attacks:[{name:'Dague',bonus:'+5',dmg:'1d4+3',desc:''}],
     inventory:['Rations (1 jour)','Corde (15 m)'],
-    features:['Attaque sournoise','Assassinat']
+    features:['Attaque sournoise','Assassinat'],
+    coins:{ pc:0, pa:0, pe:0, po:42, pp:0 },   // <<<< ajouté
+    updatedAtLocal: Date.now()
   };
-  Object.values(SKILLS).flat().forEach(n=>o.skillManual[n]='');
+  ABILITIES.forEach(a=>a.skills.forEach(s=>o.skillManual[s]=''));
   return o;
 }
 
-/* ====== Snapshot pour la synchro visuelle ====== */
-let CURRENT_SNAPSHOT = "";
-const snapshotOf = (d) => JSON.stringify(d);
+/* ====== rendu ====== */
+function abilityRow(a,d){
+  const skillsHTML = a.skills.map(s=>`
+    <div class="subrow"><div class="dagger">🗡️</div><div>${s}</div>
+      <input class="inp" type="number" id="sk_${s}" placeholder="bonus" value="${d.skillManual[s]??''}" oninput="save()">
+    </div>`).join('');
+  const subHidden = d.collapsed[a.key] ? 'hidden' : '';
+  return `
+  <div class="ability" data-key="${a.key}">
+    <div class="ability-h">
+      <div>
+        <label>${a.name}</label>
+        <input class="inp" id="abl_${a.key}" type="number" value="${d.abilities[a.key]??10}"
+          oninput="recalcOne('${a.key}');save()">
+      </div>
+      <div class="badge" id="mod_${a.key}">${fmt(mod(d.abilities[a.key]))}</div>
+      <button class="toggle-mini" onclick="toggleAbility('${a.key}')">${d.collapsed[a.key]?'▸':'▾'}</button>
+    </div>
+    <div class="sub ${subHidden}">
+      <div class="subrow"><div class="dagger">🗡️</div><div>Sauvegarde</div>
+        <input class="inp" type="number" id="sav_${a.key}" placeholder="bonus" value="${d.saveManual[a.key]??''}" oninput="save()">
+      </div>
+      ${skillsHTML}
+    </div>
+  </div>`;
+}
 
-/* ====== Persistance ====== */
-function isCompact(){ return qs('#abilities').classList.contains('abilities-compact'); }
+function renderAll(d) {
+  // 1) Caractéristiques
+  const host = qs('#abilities');
+  host.innerHTML = ABILITIES.map(a => abilityRow(a, d)).join('');
+
+  ABILITIES.forEach(a => {
+    setV('abl_' + a.key, d.abilities[a.key]);
+    setT('mod_' + a.key, fmt(mod(d.abilities[a.key])));
+    setV('sav_' + a.key, d.saveManual[a.key] ?? '');
+    (a.skills || []).forEach(s => { setV('sk_' + s, d.skillManual[s] ?? ''); });
+  });
+
+  // 2) Listes
+  qs('#attacks').innerHTML   = (d.attacks   || []).map(a => attackRow(a.name, a.bonus, a.dmg, a.desc)).join('');
+  qs('#inventory').innerHTML = (d.inventory || []).map(v => listRow('item', v)).join('');
+  qs('#features').innerHTML  = (d.features  || []).map(v => listRow('feature', v, 'Nouveau trait / don / capacité')).join('');
+
+  // 3) Champs simples
+  setV('char_name',  d.char_name);
+  setV('class_only', d.class_only);
+  setV('level',      d.level);
+  setV('background', d.background);
+  setV('race',       d.race);
+  setV('subclass',   d.subclass);
+  setV('prof_bonus', d.prof_bonus);
+
+  setV('ac',         d.ac);
+  setV('init',       d.init);
+  setV('speed',      d.speed);
+  setV('hp',         d.hp);
+  setV('hp_max',     d.hp_max);
+  setV('hit_dice',   d.hit_dice);
+  setV('temp_notes', d.temp_notes);
+
+  // 4) Pièces (nouveaux champs)
+  setV('coin_pc', d.coins?.pc ?? 0);
+  setV('coin_pa', d.coins?.pa ?? 0);
+  setV('coin_pe', d.coins?.pe ?? 0);
+  setV('coin_po', d.coins?.po ?? 42);
+  setV('coin_pp', d.coins?.pp ?? 0);
+
+  // 5) Étoiles
+  syncStars(['star1','star2','star3'], d.inspirationStars, 'gold');
+  syncStars(['ds_s1','ds_s2','ds_s3'], d.ds_success,       'gold');
+  syncStars(['ds_f1','ds_f2','ds_f3'], d.ds_failure,       'black');
+
+  // 6) état “compact/détaillé”
+  ABILITIES.forEach(a => {
+    const sub = qs(`[data-key="${a.key}"] .sub`);
+    if (!sub) return;
+    if (d.collapsed[a.key]) sub.classList.add('hidden'); else sub.classList.remove('hidden');
+  });
+
+  // >>> AJOUTE CET APPEL ICI <<<
+  colorizeAllBonusBubbles();
+
+}
+
+function setVal(id,val){ const el=qs('#'+id); if(el) el.value=val; }
+function recalcOne(key){
+  const el = qs('#mod_' + key);
+  const ablEl = qs('#abl_' + key);
+  if (!el || !ablEl) return;
+
+  const v = num(ablEl.value, 10);
+  const m = mod(v);
+
+  el.textContent = fmt(m);
+}
+
+/* ====== collecte & save ====== */
 function collect(){
   const d=defaults();
+
   ABILITIES.forEach(a=>{
-    d.abilities[a.key]=i(v('abl_'+a.key),10);
-    d.saveManual[a.key]=v('sav_'+a.key);
+    d.abilities[a.key]=num(qs('#abl_'+a.key)?.value,10);
+    d.saveManual[a.key]=qs('#sav_'+a.key)?.value??'';
+    d.collapsed[a.key]=qs(`[data-key="${a.key}"] .sub`)?.classList.contains('hidden')||false;
   });
-  Object.values(SKILLS).flat().forEach(n=>d.skillManual[n]=v('sk_'+n));
-  d.char_name=v('char_name'); d.class_only=v('class_only'); d.level=i(v('level'),1);
-  d.background=v('background'); d.race=v('race'); d.subclass=v('subclass'); d.prof_bonus=i(v('prof_bonus'),2);
-  d.ac=i(v('ac'),12); d.init=i(v('init'),2); d.speed=i(v('speed'),9);
-  d.hp=i(v('hp'),10); d.hp_max=i(v('hp_max'),10); d.hit_dice=v('hit_dice'); d.temp_notes=v('temp_notes');
+  ABILITIES.forEach(a=>a.skills.forEach(s=> d.skillManual[s]=qs('#sk_'+s)?.value??'' ));
+
+  d.char_name=qs('#char_name')?.value??'';
+  d.class_only=qs('#class_only')?.value??'';
+  d.level=num(qs('#level')?.value,1);
+  d.background=qs('#background')?.value??'';
+  d.race=qs('#race')?.value??'';
+  d.subclass=qs('#subclass')?.value??'';
+  d.prof_bonus=num(qs('#prof_bonus')?.value,2);
+
+  d.ac=num(qs('#ac')?.value,12);
+  d.init=num(qs('#init')?.value,2);
+  d.speed=num(qs('#speed')?.value,9);
+  d.hp=num(qs('#hp')?.value,10);
+  d.hp_max=num(qs('#hp_max')?.value,10);
+  d.hit_dice=qs('#hit_dice')?.value??'';
+  d.temp_notes=qs('#temp_notes')?.value??'';
+
   d.inspirationStars=starsCount(['star1','star2','star3']);
-  d.ds_success=starsCount(['ds_s1','ds_s2','ds_s3']); d.ds_failure=starsCount(['ds_f1','ds_f2','ds_f3']);
-  d.attacks=qsa('[data-attack]').map(r=>({name:qs('.atk-name',r).value,bonus:qs('.atk-bonus',r).value,dmg:qs('.atk-dmg',r).value,desc:qs('.atk-desc',r).value}));
-  d.inventory=qsa('[data-item]').map(x=>x.value);
-  d.features=qsa('[data-feature]').map(x=>x.value);
-  d.abilitiesCompact=isCompact();
+  d.ds_success=starsCount(['ds_s1','ds_s2','ds_s3']);
+  d.ds_failure=starsCount(['ds_f1','ds_f2','ds_f3']);
+
+  d.attacks=qsa('#attacks [data-attack]').map(r=>({
+    name:qs('.atk-name',r).value,
+    bonus:qs('.atk-bonus',r).value,
+    dmg:qs('.atk-dmg',r).value,
+    desc:qs('.atk-desc',r).value
+  }));
+  d.inventory=qsa('#inventory [data-item]').map(x=>x.value);
+  d.features=qsa('#features [data-feature]').map(x=>x.value);
+
+  // Pièces (collecte)
+  d.coins = {
+    pc: num(qs('#coin_pc')?.value, 0),
+    pa: num(qs('#coin_pa')?.value, 0),
+    pe: num(qs('#coin_pe')?.value, 0),
+    po: num(qs('#coin_po')?.value, 42),
+    pp: num(qs('#coin_pp')?.value, 0),
+  };
+
+  d.updatedAtLocal=Date.now();
   return d;
 }
-function setStatus(s){ setT('status',s); }
-function save(){
-  const payload=collect();
-  localStorage.setItem(K,JSON.stringify(payload));
+
+function setStatus(s){
+  const el = qs('#status');
+  if (el) el.innerHTML = `${s} • <em>id=<code>${CLOUD_ID}</code></em> • <span id="dbg"></span>`;
+}
+
+async function save(){
+  if(!canStore()){ setStatus('⚠️ Sauvegarde inactive'); return; }
+  const payload = collect();
+  localStorage.setItem(K, JSON.stringify(payload));
   setStatus('Sauvegardé ✅');
-  clearTimeout(window._cloudDeb);
-  window._cloudDeb=setTimeout(async()=>{
-    try{ await cloudPut(payload); setStatus('Sauvegardé + Cloud ☁️'); }
-    catch(e){ setStatus('⚠️ Cloud indisponible'); console.error(e); }
-  },400);
-}
 
-/* ====== Application d’un état + mémorisation snapshot ====== */
-function applyAll(d){
-  renderAbilities(d);
-  renderRight(d);
-  applyRightOrder();
-  initDnD();
-
-  ABILITIES.forEach(a=>setT('mod_'+a.key,fmt(mod(d.abilities[a.key]))));
-  syncStars(['star1','star2','star3'], d.inspirationStars,'gold');
-  syncStars(['ds_s1','ds_s2','ds_s3'], d.ds_success,'gold');
-  syncStars(['ds_f1','ds_f2','ds_f3'], d.ds_failure,'black');
-
-  const wrap=qs('#abilities'); wrap.classList.toggle('abilities-compact', !!d.abilitiesCompact); setToggleLabel();
-
-  localStorage.setItem(K,JSON.stringify(d));
-  CURRENT_SNAPSHOT = snapshotOf(d);
-}
-
-/* ====== Chargement (priorité cloud) ====== */
-async function load(){
-  let d=null;
-  try{
-    const cloud=await cloudGet();
-    if(cloud){ d=cloud; setStatus(`Données cloud chargées ☁️ (id=${CLOUD_ID})`); }
-  }catch(_){}
-  if(!d){ try{ d=JSON.parse(localStorage.getItem(K)); }catch(_){} }
-  if(!d) d=defaults();
-  applyAll(d);
-}
-
-/* ====== Polling/Sync ====== */
-async function pollOnce(){
-  try{
-    const cloud = await cloudGet(); // no-store
-    if (!cloud) return;
-    const snapCloud = snapshotOf(cloud);
-    if (snapCloud !== CURRENT_SNAPSHOT){
-      applyAll(cloud);
-      setStatus('Mise à jour depuis le cloud ☁️');
+  clearTimeout(window._debPUT);
+  window._debPUT=setTimeout(async()=>{
+    try{
+      await cloudPut(payload);
+      setStatus('Sauvegardé + Cloud ☁️');
+    }catch(e){
+      console.error(e); setStatus('⚠️ Cloud indisponible');
     }
-  }catch(e){ /* silencieux */ }
+  }, 400);
 }
 
-/* ====== Toggle global compact ====== */
-function setToggleLabel(){
-  const btn=qs('#toggleCompactBtn');
-  const compact=isCompact();
-  btn.textContent = compact ? 'Vue détaillée' : 'Vue compacte';
+/* ====== Load + polling ====== */
+function deepEqual(a,b){ try{return JSON.stringify(a)===JSON.stringify(b)}catch{return false}}
+
+async function load(){
+  let d = null;
+
+  // 1) Cloud prioritaire
+  try {
+    const cloud = await cloudGet(); // {payload, updatedAt}
+    if (cloud?.payload) {
+      d = cloud.payload;
+      d.updatedAt = cloud.updatedAt;
+      setStatus(`Données cloud chargées ☁️ (id=${CLOUD_ID})`);
+    }
+  } catch(e) { console.warn("Cloud non disponible:", e); }
+
+  // 2) Fallback local
+  if(!d) {
+    try { d = JSON.parse(localStorage.getItem(K)); } catch(_){}
+  }
+  if(!d) d = defaults();
+
+  renderAll(d);
+  localStorage.setItem(K, JSON.stringify(d));
 }
-function toggleCompact(){
-  const wrap=qs('#abilities');
-  wrap.classList.toggle('abilities-compact');
-  setToggleLabel();
+
+async function pollOnce(){
+  const cloud = await cloudGet();
+  if(!cloud?.payload) return;
+
+  const local = JSON.parse(localStorage.getItem(K) || 'null');
+
+  if(!local){
+    localStorage.setItem(K, JSON.stringify(cloud.payload));
+    renderAll(cloud.payload);
+    setStatus('Maj depuis cloud ☁️');
+    return;
+  }
+
+  const cloudTS = cloud.updatedAt || 0;
+  const localTS = local.updatedAtLocal || 0;
+
+  if (cloudTS > localTS) {
+    localStorage.setItem(K, JSON.stringify(cloud.payload));
+    renderAll(cloud.payload);
+    setStatus('Maj (cloud plus récent) ☁️');
+  }
+}
+
+/* ====== interactions ====== */
+function toggleAbility(key){
+  const sub = qs(`[data-key="${key}"] .sub`);
+  if(!sub) return;
+  sub.classList.toggle('hidden');
+  colorizeAllBonusBubbles(); // <- recolore les bulles visibles
   save();
 }
 
-/* ====== Caractéristiques (gauche) ====== */
-const dagger=()=>'<div class="dagger"><span>🗡️</span></div>';
-function renderAbilities(d){
-  const host=qs('#abilities'); host.innerHTML='';
-  ABILITIES.forEach(a=>{
-    const list=SKILLS[a.key]||[];
-    const skillRows=list.map(s=>`
-      <div class="subrow">${dagger()}<div>${s}</div>
-        <input class="inp" type="number" id="sk_${s}" placeholder="bonus" value="${d.skillManual[s]??''}" oninput="save()">
-      </div>`).join('');
-    const html=`
-      <div class="ability" data-key="${a.key}">
-        <div class="ability-h">
-          <div>
-            <label>${a.name}</label>
-            <input class="inp" id="abl_${a.key}" type="number" value="${d.abilities[a.key]??10}" oninput="recalcMods();save()">
-          </div>
-          <div class="badge" id="mod_${a.key}">${fmt(mod(d.abilities[a.key]))}</div>
-        </div>
-        <div class="sub">
-          <div class="subrow">${dagger()}<div>Sauvegarde</div>
-            <input class="inp" type="number" id="sav_${a.key}" placeholder="bonus" value="${d.saveManual[a.key]??''}" oninput="save()">
-          </div>
-          ${skillRows}
-        </div>
-      </div>`;
-    host.insertAdjacentHTML('beforeend',html);
-  });
-}
-function recalcMods(){ ABILITIES.forEach(a=>setT('mod_'+a.key,fmt(mod(v('abl_'+a.key))))); }
+/* ====== étoiles ====== */
+function starsCount(ids){return ids.reduce((c,id)=>c+(qs('#'+id)?.classList.contains('active')?1:0),0)}
+function syncStars(ids,n,cls){ ids.forEach((id,idx)=>{const el=qs('#'+id); if(!el)return; el.classList.remove('active','gold','black'); if(idx<n){el.classList.add('active',cls)}}); }
+function toggleStars(ids,n,cls){ const cur=starsCount(ids.map(id=>id)); const next=(n<=cur)?n-1:n; syncStars(ids,next,cls); save(); }
 
-/* ====== Colonne droite ====== */
-function rightCard(id,title,inner){ return `
-  <div class="card" data-cardid="${id}">
-    <div class="title"><span>${title}</span><div class="handle" title="Déplacer"></div></div>
-    ${inner}
-  </div>`; }
-function renderRight(d){
-  const col=qs('#rightCol'); col.innerHTML='';
-  col.insertAdjacentHTML('beforeend', rightCard('identity', 'Identité', `
-    <label>Nom du personnage</label><input id="char_name" class="inp" type="text" value="${d.char_name}" oninput="save()">
-    <div class="row row2">
-      <div><label>Classe</label><input id="class_only" class="inp" type="text" value="${d.class_only}" oninput="save()"></div>
-      <div><label>Niveau</label><input id="level" class="inp" type="number" min="1" value="${d.level}" oninput="save()"></div>
-    </div>
-    <div class="row row2">
-      <div><label>Origine/Background</label><input id="background" class="inp" type="text" value="${d.background}" oninput="save()"></div>
-      <div><label>Race</label><input id="race" class="inp" type="text" value="${d.race}" oninput="save()"></div>
-    </div>
-    <div class="row row2">
-      <div><label>Sous-classe</label><input id="subclass" class="inp" type="text" value="${d.subclass}" oninput="save()"></div>
-      <div><label>Bonus de maîtrise</label><input id="prof_bonus" class="inp" type="number" step="1" value="${d.prof_bonus}" oninput="save()"></div>
-    </div>
-    <div class="hr"></div>
-    <label>Inspiration héroïque</label>
-    <div class="stars">
-      <div class="star" id="star1" onclick="toggleStars(['star1','star2','star3'],1,'gold')">★</div>
-      <div class="star" id="star2" onclick="toggleStars(['star1','star2','star3'],2,'gold')">★</div>
-      <div class="star" id="star3" onclick="toggleStars(['star1','star2','star3'],3,'gold')">★</div>
-    </div>
-  `));
-  col.insertAdjacentHTML('beforeend', rightCard('combat', 'Combat', `
-    <div class="row row3">
-      <div><label>Classe d'armure</label><input id="ac" class="inp" type="number" value="${d.ac}" oninput="save()"></div>
-      <div><label>Initiative</label><input id="init" class="inp" type="number" value="${d.init}" oninput="save()"></div>
-      <div><label>Vitesse (m)</label><input id="speed" class="inp" type="number" value="${d.speed}" oninput="save()"></div>
-    </div>
-    <div class="row row2">
-      <div><label>Points de vie (actuels / max)</label>
-        <div class="row" style="grid-template-columns:1fr auto 1fr">
-          <input id="hp" class="inp" type="number" value="${d.hp}" oninput="save()"><span style="place-self:center">/</span>
-          <input id="hp_max" class="inp" type="number" value="${d.hp_max}" oninput="save()">
-        </div>
-      </div>
-      <div><label>Dés de vie (ex. 3d8)</label><input id="hit_dice" class="inp" type="text" value="${d.hit_dice}" oninput="save()"></div>
-    </div>
-    <div class="row row2">
-      <div><label>État temporaire / Notes</label><input id="temp_notes" class="inp" type="text" value="${d.temp_notes}" oninput="save()"></div>
-      <div>
-        <label>Jets contre la mort</label>
-        <div style="color:var(--muted);font-size:13px">Succès</div>
-        <div class="stars">
-          <div class="star" id="ds_s1" onclick="toggleStars(['ds_s1','ds_s2','ds_s3'],1,'gold')">★</div>
-          <div class="star" id="ds_s2" onclick="toggleStars(['ds_s1','ds_s2','ds_s3'],2,'gold')">★</div>
-          <div class="star" id="ds_s3" onclick="toggleStars(['ds_s1','ds_s2','ds_s3'],3,'gold')">★</div>
-        </div>
-        <div style="color:var(--muted);font-size:13px">Échecs</div>
-        <div class="stars">
-          <div class="star" id="ds_f1" onclick="toggleStars(['ds_f1','ds_f2','ds_f3'],1,'black')">★</div>
-          <div class="star" id="ds_f2" onclick="toggleStars(['ds_f1','ds_f2','ds_f3'],2,'black')">★</div>
-          <div class="star" id="ds_f3" onclick="toggleStars(['ds_f1','ds_f2','ds_f3'],3,'black')">★</div>
-        </div>
-      </div>
-    </div>
-  `));
-  const atkRows = (d.attacks||[]).map(a=>attackRow(a.name,a.bonus,a.dmg,a.desc)).join('');
-  col.insertAdjacentHTML('beforeend', rightCard('attacks','Attaques & sorts',`
-    <div id="attacks">${atkRows}</div>
-    <button class="btn sec" onclick="addAttack()">+ Ajouter</button>
-  `));
-  const inv = (d.inventory||[]).map(v=>listRow('item',v)).join('');
-  col.insertAdjacentHTML('beforeend', rightCard('inventory','Équipement & trésors',`
-    <div id="inventory">${inv}</div>
-    <button class="btn sec" onclick="addItem()">+ Ajouter objet</button>
-  `));
-  const feats = (d.features||[]).map(v=>listRow('feature',v,'Nouveau trait / don / capacité')).join('');
-  col.insertAdjacentHTML('beforeend', rightCard('features','Traits, dons & capacités',`
-    <div id="features">${feats}</div>
-    <button class="btn sec" onclick="addFeature()">+ Ajouter capacité</button>
-  `));
-}
-/* templates */
+/* ====== templates listes ====== */
 function attackRow(name='',bonus='',dmg='',desc=''){ return `
   <div class="atk" data-attack>
     <input class="inp atk-name" type="text" placeholder="Nom (ex. Dague)" value="${name}" oninput="save()">
@@ -374,80 +671,73 @@ function listRow(kind,val,ph='Nouvel objet'){ return `
     <input class="inp" type="text" data-${kind} value="${val}" placeholder="${ph}" oninput="save()">
     <button class="icon del" title="Supprimer" onclick="this.parentElement.remove();save()">✕</button>
   </div>`;}
-/* add items */
 function addAttack(){ qs('#attacks').insertAdjacentHTML('beforeend', attackRow()); save(); }
 function addItem(){ qs('#inventory').insertAdjacentHTML('beforeend', listRow('item','')); save(); }
 function addFeature(){ qs('#features').insertAdjacentHTML('beforeend', listRow('feature','','Nouveau trait / don / capacité')); save(); }
 
-/* ====== Étoiles ====== */
-function starsCount(ids){return ids.reduce((c,id)=>c+(qs('#'+id)?.classList.contains('active')?1:0),0)}
-function syncStars(ids,n,cls){ ids.forEach((id,idx)=>{const el=qs('#'+id); if(!el)return; el.classList.remove('active','gold','black'); if(idx<n){el.classList.add('active',cls)}}); }
-function toggleStars(ids,n,cls){ const cur=starsCount(ids.map(id=>id)); const next=(n<=cur)?n-1:n; syncStars(ids,next,cls); save(); }
-
-/* ====== Drag & drop colonne droite ====== */
-function initDnD(){
-  const col=qs('#rightCol');
-  col.addEventListener('dragover',e=>{e.preventDefault();const drag=qs('#rightCol .card.dragging'); if(!drag)return; const after=getAfter(col,e.clientY); after?col.insertBefore(drag,after):col.appendChild(drag);});
-  col.addEventListener('drop',saveRightOrder);
-  qsa('#rightCol .card').forEach(card=>{
-    const h=qs('.handle',card); if(!h)return;
-    qsa('input,textarea,button',card).forEach(el=>el.setAttribute('draggable','false'));
-    h.addEventListener('mousedown',()=>card.setAttribute('draggable','true'));
-    h.addEventListener('touchstart',()=>card.setAttribute('draggable','true'),{passive:true});
-    card.addEventListener('dragstart',()=>card.classList.add('dragging'));
-    card.addEventListener('dragend',()=>{card.classList.remove('dragging');card.setAttribute('draggable','false');saveRightOrder();});
-  });
-  function getAfter(container,y){
-    return qsa('.card:not(.dragging)',container).reduce((c,ch)=>{
-      const box=ch.getBoundingClientRect(); const off=y-box.top-box.height/2;
-      return (off<0 && off>c.off)?{off:off,el:ch}:c;
-    },{off:Number.NEGATIVE_INFINITY,el:null}).el;
-  }
-}
-function saveRightOrder(){ const order=qsa('#rightCol>.card').map(c=>c.dataset.cardid); localStorage.setItem(ORDER,JSON.stringify(order)); }
-function applyRightOrder(){
-  let order=null; try{order=JSON.parse(localStorage.getItem(ORDER))}catch(_){}
-  if(!order) return; const col=qs('#rightCol'); const map={}; qsa('#rightCol>.card').forEach(c=>map[c.dataset.cardid]=c);
-  order.forEach(id=>{ if(map[id]) col.appendChild(map[id]); });
-}
-
-/* ====== Export / Import / Reset ====== */
+/* ====== export / import / reset ====== */
 function exportJSON(){
   const blob=new Blob([JSON.stringify(collect())],{type:'application/json'});
-  const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url;a.download='fiche-dnd-2024.json';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url;a.download='fiche-dnd-2024.json';
+  document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
 }
 function importJSON(file){
-  const r=new FileReader(); r.onload=e=>{try{const data=JSON.parse(e.target.result);localStorage.setItem(K,JSON.stringify(data));load();setStatus('Import réussi ✅')}catch{setStatus('❌ Fichier invalide')}}; r.readAsText(file);
+  const r=new FileReader();
+  r.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      localStorage.setItem(K,JSON.stringify(data));
+      renderAll(data); setStatus('Import réussi ✅');
+    }catch{setStatus('❌ Fichier invalide')}
+  };
+  r.readAsText(file);
 }
-async function resetAll(){
-  if(confirm('Réinitialiser la fiche ?')){
-    const d=defaults();
-    localStorage.setItem(K,JSON.stringify(d));
-    try{ await cloudPut(d); }catch(e){ console.warn('Cloud reset fail',e); }
-    load();
-  }
-}
+function resetAll(){ if(confirm('Réinitialiser la fiche ?')){localStorage.removeItem(K);load();} }
 
-/* ====== Boot ====== */
-window.addEventListener('load', async ()=>{
-  await load();
-
-  // UI handlers
+/* ====== boot ====== */
+window.addEventListener('load',()=>{
+  load();
   qs('#exportBtn').addEventListener('click',exportJSON);
   qs('#importBtn').addEventListener('click',()=>qs('#importInput').click());
   qs('#importInput').addEventListener('change',e=>{const f=e.target.files[0]; if(f) importJSON(f);});
   qs('#resetBtn').addEventListener('click',resetAll);
-  qs('#toggleCompactBtn').addEventListener('click',toggleCompact);
-  qs('#syncBtn').addEventListener('click', pollOnce);
 
-  // Polling auto
-  clearInterval(window._poll);
-  window._poll = setInterval(pollOnce, 5000);
+  // nouvelle fiche
+  qs('#newBtn').addEventListener('click', () => {
+    const id = prompt('ID de la nouvelle fiche ?', randId());
+    if(!id) return;
+    location.search = `?id=${encodeURIComponent(id)}`;
+  });
+
+  // copier lien
+  qs('#linkBtn').addEventListener('click', async () => {
+    const url = location.href;
+    try{
+      await navigator.clipboard.writeText(url);
+      setStatus('Lien copié ✅');
+    }catch{
+      setStatus('Copie impossible, sélectionne l’URL manuellement');
+    }
+  });
+
+  // push cloud immédiat
+  qs('#syncBtn').addEventListener('click', async () => {
+    await cloudPut(collect());
+  });
+
+  // pull cloud immédiat
+  qs('#pullBtn').addEventListener('click', async () => {
+    const cloud = await cloudGet();
+    if(!cloud?.payload){ setStatus('Aucune donnée cloud'); return; }
+    localStorage.setItem(K, JSON.stringify(cloud.payload));
+    renderAll(cloud.payload);
+    setStatus(`Tirage cloud ${nowIso()} ☁️`);
+  });
+
+  // polling (4s)
+  clearInterval(window._poll); window._poll=setInterval(pollOnce, 4000);
 });
-
-/* expose global (utile si besoin depuis HTML inline) */
-window.recalcMods=recalcMods; window.addAttack=addAttack; window.addItem=addItem; window.addFeature=addFeature;
-window.toggleStars=toggleStars; window.save=save; window.toggleCompact=toggleCompact;
 </script>
 </body>
 </html>
